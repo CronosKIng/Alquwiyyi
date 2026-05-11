@@ -164,3 +164,6 @@ public class DataManager {
         }
     }
 }
+
+    public List<Invoice> getAllInvoices() { return invoices; }
+    public List<Payment> getAllPayments() { return payments; }

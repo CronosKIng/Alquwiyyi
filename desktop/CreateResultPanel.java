@@ -3,6 +3,7 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.io.*;
 
 public class CreateResultPanel extends JPanel {
     private DataManager dataManager;
@@ -11,6 +12,7 @@ public class CreateResultPanel extends JPanel {
     private Map<String, JTextField> markFields = new HashMap<>();
     private JTextArea resultArea;
     private JButton saveBtn, calculateBtn, printBtn;
+    private Result currentResult;
     
     public CreateResultPanel(DataManager dataManager) {
         this.dataManager = dataManager;
@@ -118,7 +120,7 @@ public class CreateResultPanel extends JPanel {
         String studentName = studentInfo.split("\\|")[0];
         String studentId = studentInfo.split("\\|")[1];
         
-        Result result = new Result(studentId, studentName, className);
+        currentResult = new Result(studentId, studentName, className);
         Map<String, Integer> marks = new HashMap<>();
         
         for (Map.Entry<String, JTextField> entry : markFields.entrySet()) {
@@ -135,8 +137,8 @@ public class CreateResultPanel extends JPanel {
             }
         }
         
-        result.setMarks(marks);
-        result.calculateGradeAndDivision();
+        currentResult.setMarks(marks);
+        currentResult.calculateGradeAndDivision();
         
         StringBuilder sb = new StringBuilder();
         sb.append("====================================\n");
@@ -150,24 +152,22 @@ public class CreateResultPanel extends JPanel {
             sb.append(String.format("  %-20s: %3d\n", entry.getKey(), entry.getValue()));
         }
         sb.append("------------------------------------\n");
-        sb.append("Total Marks: ").append(result.getTotalMarks()).append("\n");
-        sb.append("Average: ").append(result.getTotalMarks() / marks.size()).append("\n");
-        sb.append("Grade: ").append(result.getGrade()).append("\n");
-        sb.append("Division: ").append(result.getDivision()).append("\n");
+        sb.append("Total Marks: ").append(currentResult.getTotalMarks()).append("\n");
+        sb.append("Average: ").append(currentResult.getTotalMarks() / marks.size()).append("\n");
+        sb.append("Grade: ").append(currentResult.getGrade()).append("\n");
+        sb.append("Division: ").append(currentResult.getDivision()).append("\n");
         sb.append("====================================\n");
         
         resultArea.setText(sb.toString());
-        result.putClientProperty("tempResult", result);
     }
     
     private void saveResult() {
-        Result tempResult = (Result) resultArea.getClientProperty("tempResult");
-        if (tempResult == null) {
+        if (currentResult == null) {
             JOptionPane.showMessageDialog(this, "Please calculate results first!");
             return;
         }
         
-        dataManager.addResult(tempResult);
+        dataManager.addResult(currentResult);
         JOptionPane.showMessageDialog(this, "Result saved successfully!");
     }
     
@@ -179,7 +179,7 @@ public class CreateResultPanel extends JPanel {
         }
         
         JFileChooser chooser = new JFileChooser("reports");
-        chooser.setSelectedFile(new File("result_report.txt"));
+        chooser.setSelectedFile(new java.io.File("result_report.txt"));
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             try (java.io.PrintWriter writer = new java.io.PrintWriter(chooser.getSelectedFile())) {
                 writer.print(text);

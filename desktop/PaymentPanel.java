@@ -102,11 +102,14 @@ public class PaymentPanel extends JPanel {
     
     private void refreshTable() {
         tableModel.setRowCount(0);
-        for (Payment p : dataManager.getAllPayments()) {
-            tableModel.addRow(new Object[]{
-                p.getId(), p.getStudentName(), p.getAmount(),
-                p.getDescription(), p.getDate()
-            });
+        java.util.List<Payment> payments = dataManager.getAllPayments();
+        if (payments != null) {
+            for (Payment p : payments) {
+                tableModel.addRow(new Object[]{
+                    p.getId(), p.getStudentName(), p.getAmount(),
+                    p.getDescription(), p.getDate()
+                });
+            }
         }
     }
 }

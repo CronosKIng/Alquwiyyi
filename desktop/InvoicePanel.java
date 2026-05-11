@@ -103,11 +103,14 @@ public class InvoicePanel extends JPanel {
     
     private void refreshTable() {
         tableModel.setRowCount(0);
-        for (Invoice inv : dataManager.getAllInvoices()) {
-            tableModel.addRow(new Object[]{
-                inv.getId(), inv.getStudentName(), inv.getAmount(),
-                inv.getDescription(), inv.getDate(), inv.getStatus()
-            });
+        java.util.List<Invoice> invoices = dataManager.getAllInvoices();
+        if (invoices != null) {
+            for (Invoice inv : invoices) {
+                tableModel.addRow(new Object[]{
+                    inv.getId(), inv.getStudentName(), inv.getAmount(),
+                    inv.getDescription(), inv.getDate(), inv.getStatus()
+                });
+            }
         }
     }
 }
