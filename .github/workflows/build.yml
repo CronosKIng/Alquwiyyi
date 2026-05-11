@@ -1,0 +1,61 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Download GSON
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "desktop\lib"
+          Invoke-WebRequest -Uri "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar" -OutFile "desktop\lib\gson.jar"
+
+      - name: Compile Java Files
+        shell: pwsh
+        run: |
+          cd desktop
+          javac -cp "lib\gson.jar" -d . *.java
+
+      - name: Create JAR
+        shell: pwsh
+        run: |
+          cd desktop
+          jar cvfe AL-QUWIYYI.jar LoginFrame *.class
+          Move-Item -Force AL-QUWIYYI.jar lib\
+
+      - name: Build EXE with jpackage
+        shell: pwsh
+        run: |
+          jpackage `
+            --type exe `
+            --dest dist `
+            --input desktop\lib `
+            --main-jar AL-QUWIYYI.jar `
+            --main-class LoginFrame `
+            --name "AL-QUWIYYI" `
+            --win-shortcut `
+            --win-menu `
+            --vendor "AL-QUWIYYI" `
+            --app-version "1.0.0"
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: AL-QUWIYYI-Installer
+          path: dist/*.exe
+          retention-days: 30
