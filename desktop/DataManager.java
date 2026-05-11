@@ -1,7 +1,4 @@
-import com.google.gson.*;
-import com.google.gson.reflect.*;
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 public class DataManager {
@@ -13,7 +10,6 @@ public class DataManager {
     private List<Invoice> invoices = new ArrayList<>();
     
     private final String DATA_DIR = "data/";
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     
     public DataManager() {
         new File(DATA_DIR).mkdirs();
@@ -28,34 +24,58 @@ public class DataManager {
         loadInvoices();
     }
     
-    public void saveStudents() {
-        saveToFile("students.json", students);
+    // Student methods
+    @SuppressWarnings("unchecked")
+    public void loadStudents() {
+        File file = new File(DATA_DIR + "students.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                students = (List<Student>) ois.readObject();
+            } catch (Exception e) {
+                students = new ArrayList<>();
+            }
+        }
     }
     
-    public void loadStudents() {
-        students = loadFromFile("students.json", new TypeToken<ArrayList<Student>>(){}.getType());
-        if (students == null) students = new ArrayList<>();
+    public void saveStudents() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "students.ser"))) {
+            oos.writeObject(students);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void addStudent(Student student) {
-        student.setId(generateId("STU"));
+        student.setId("STU_" + System.currentTimeMillis());
         students.add(student);
         saveStudents();
     }
     
     public List<Student> getAllStudents() { return students; }
     
-    public void saveSubjects() {
-        saveToFile("subjects.json", subjects);
+    // Subject methods
+    @SuppressWarnings("unchecked")
+    public void loadSubjects() {
+        File file = new File(DATA_DIR + "subjects.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                subjects = (List<Subject>) ois.readObject();
+            } catch (Exception e) {
+                subjects = new ArrayList<>();
+            }
+        }
     }
     
-    public void loadSubjects() {
-        subjects = loadFromFile("subjects.json", new TypeToken<ArrayList<Subject>>(){}.getType());
-        if (subjects == null) subjects = new ArrayList<>();
+    public void saveSubjects() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "subjects.ser"))) {
+            oos.writeObject(subjects);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void addSubject(Subject subject) {
-        subject.setId(generateId("SUB"));
+        subject.setId("SUB_" + System.currentTimeMillis());
         subjects.add(subject);
         saveSubjects();
     }
@@ -70,34 +90,58 @@ public class DataManager {
     
     public List<Subject> getAllSubjects() { return subjects; }
     
-    public void saveClasses() {
-        saveToFile("classes.json", classes);
+    // Class methods
+    @SuppressWarnings("unchecked")
+    public void loadClasses() {
+        File file = new File(DATA_DIR + "classes.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                classes = (List<Class>) ois.readObject();
+            } catch (Exception e) {
+                classes = new ArrayList<>();
+            }
+        }
     }
     
-    public void loadClasses() {
-        classes = loadFromFile("classes.json", new TypeToken<ArrayList<Class>>(){}.getType());
-        if (classes == null) classes = new ArrayList<>();
+    public void saveClasses() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "classes.ser"))) {
+            oos.writeObject(classes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void addClass(Class newClass) {
-        newClass.setId(generateId("CLS"));
+        newClass.setId("CLS_" + System.currentTimeMillis());
         classes.add(newClass);
         saveClasses();
     }
     
     public List<Class> getAllClasses() { return classes; }
     
-    public void saveResults() {
-        saveToFile("results.json", results);
+    // Result methods
+    @SuppressWarnings("unchecked")
+    public void loadResults() {
+        File file = new File(DATA_DIR + "results.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                results = (List<Result>) ois.readObject();
+            } catch (Exception e) {
+                results = new ArrayList<>();
+            }
+        }
     }
     
-    public void loadResults() {
-        results = loadFromFile("results.json", new TypeToken<ArrayList<Result>>(){}.getType());
-        if (results == null) results = new ArrayList<>();
+    public void saveResults() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "results.ser"))) {
+            oos.writeObject(results);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public void addResult(Result result) {
-        result.setId(generateId("RES"));
+        result.setId("RES_" + System.currentTimeMillis());
         results.add(result);
         saveResults();
     }
@@ -112,61 +156,61 @@ public class DataManager {
     
     public List<Result> getAllResults() { return results; }
     
-    public void savePayments() {
-        saveToFile("payments.json", payments);
-    }
-    
+    // Payment methods
+    @SuppressWarnings("unchecked")
     public void loadPayments() {
-        payments = loadFromFile("payments.json", new TypeToken<ArrayList<Payment>>(){}.getType());
-        if (payments == null) payments = new ArrayList<>();
+        File file = new File(DATA_DIR + "payments.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                payments = (List<Payment>) ois.readObject();
+            } catch (Exception e) {
+                payments = new ArrayList<>();
+            }
+        }
     }
     
-    public void addPayment(Payment payment) {
-        payment.setId(generateId("PAY"));
-        payments.add(payment);
-        savePayments();
-    }
-    
-    public void saveInvoices() {
-        saveToFile("invoices.json", invoices);
-    }
-    
-    public void loadInvoices() {
-        invoices = loadFromFile("invoices.json", new TypeToken<ArrayList<Invoice>>(){}.getType());
-        if (invoices == null) invoices = new ArrayList<>();
-    }
-    
-    public void addInvoice(Invoice invoice) {
-        invoice.setId(generateId("INV"));
-        invoices.add(invoice);
-        saveInvoices();
-    }
-    
-    private String generateId(String prefix) {
-        return prefix + "_" + System.currentTimeMillis();
-    }
-    
-    private void saveToFile(String filename, Object data) {
-        try (FileWriter writer = new FileWriter(DATA_DIR + filename)) {
-            gson.toJson(data, writer);
+    public void savePayments() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "payments.ser"))) {
+            oos.writeObject(payments);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    private <T> T loadFromFile(String filename, java.lang.reflect.Type type) {
-        File file = new File(DATA_DIR + filename);
-        if (!file.exists()) return null;
-        try (FileReader reader = new FileReader(file)) {
-            return gson.fromJson(reader, type);
-        } catch (IOException e) {
-            return null;
+    public void addPayment(Payment payment) {
+        payment.setId("PAY_" + System.currentTimeMillis());
+        payments.add(payment);
+        savePayments();
+    }
+    
+    public List<Payment> getAllPayments() { return payments; }
+    
+    // Invoice methods
+    @SuppressWarnings("unchecked")
+    public void loadInvoices() {
+        File file = new File(DATA_DIR + "invoices.ser");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                invoices = (List<Invoice>) ois.readObject();
+            } catch (Exception e) {
+                invoices = new ArrayList<>();
+            }
         }
     }
+    
+    public void saveInvoices() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(DATA_DIR + "invoices.ser"))) {
+            oos.writeObject(invoices);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void addInvoice(Invoice invoice) {
+        invoice.setId("INV_" + System.currentTimeMillis());
+        invoices.add(invoice);
+        saveInvoices();
+    }
+    
+    public List<Invoice> getAllInvoices() { return invoices; }
 }
-
-    public List<Invoice> getAllInvoices() { return invoices; }
-    public List<Payment> getAllPayments() { return payments; }
-
-    public List<Invoice> getAllInvoices() { return invoices; }
-    public List<Payment> getAllPayments() { return payments; }

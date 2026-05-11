@@ -1,6 +1,8 @@
+import java.io.Serializable;
 import java.util.*;
 
-class Student {
+class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, fullName, className, parentName, parentPhone, admissionDate;
     
     public Student(String fullName, String className, String parentName, String parentPhone) {
@@ -24,7 +26,8 @@ class Student {
     }
 }
 
-class Subject {
+class Subject implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, subjectName, className;
     
     public Subject(String subjectName, String className) {
@@ -38,7 +41,8 @@ class Subject {
     public String getClassName() { return className; }
 }
 
-class Class {
+class Class implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, className, description;
     
     public Class(String className, String description) {
@@ -52,7 +56,8 @@ class Class {
     public String getDescription() { return description; }
 }
 
-class Result {
+class Result implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, studentId, studentName, className;
     private Map<String, Integer> marks = new HashMap<>();
     private String grade, division;
@@ -66,19 +71,19 @@ class Result {
     
     public void calculateGradeAndDivision() {
         if (marks.isEmpty()) return;
-        int average = marks.values().stream().mapToInt(Integer::intValue).sum() / marks.size();
+        int avg = marks.values().stream().mapToInt(Integer::intValue).sum() / marks.size();
         
-        if (average >= 80) grade = "A";
-        else if (average >= 70) grade = "B";
-        else if (average >= 60) grade = "C";
-        else if (average >= 50) grade = "D";
-        else if (average >= 40) grade = "E";
+        if (avg >= 80) grade = "A";
+        else if (avg >= 70) grade = "B";
+        else if (avg >= 60) grade = "C";
+        else if (avg >= 50) grade = "D";
+        else if (avg >= 40) grade = "E";
         else grade = "F";
         
-        if (average >= 70) division = "Division One";
-        else if (average >= 60) division = "Division Two";
-        else if (average >= 50) division = "Division Three";
-        else if (average >= 40) division = "Division Four";
+        if (avg >= 70) division = "Division One";
+        else if (avg >= 60) division = "Division Two";
+        else if (avg >= 50) division = "Division Three";
+        else if (avg >= 40) division = "Division Four";
         else division = "Division Zero";
         
         totalMarks = marks.values().stream().mapToInt(Integer::intValue).sum();
@@ -98,7 +103,8 @@ class Result {
     public void setPosition(int position) { this.position = position; }
 }
 
-class Payment {
+class Payment implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, studentId, studentName, description;
     private double amount;
     private String date;
@@ -119,7 +125,8 @@ class Payment {
     public String getStudentName() { return studentName; }
 }
 
-class Invoice {
+class Invoice implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String id, studentId, studentName, description;
     private double amount;
     private String date, status;
