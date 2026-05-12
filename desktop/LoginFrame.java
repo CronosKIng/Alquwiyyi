@@ -100,7 +100,7 @@ public class LoginFrame extends JFrame {
         ));
         passwordField.setBackground(new Color(250, 250, 250));
         passwordField.setForeground(new Color(50, 50, 50));
-        passwordField.setEchoChar('•');  // Bullet character for password
+        passwordField.setEchoChar(*);  // Bullet character for password
         gbc.gridy = 3;
         formPanel.add(passwordField, gbc);
         
