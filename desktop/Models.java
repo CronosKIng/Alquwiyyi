@@ -1,8 +1,6 @@
-import java.io.Serializable;
 import java.util.*;
 
-class Student implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Student {
     private String id, fullName, className, parentName, parentPhone, admissionDate;
     
     public Student(String fullName, String className, String parentName, String parentPhone) {
@@ -20,11 +18,9 @@ class Student implements Serializable {
     public String getParentName() { return parentName; }
     public String getParentPhone() { return parentPhone; }
     public String getAdmissionDate() { return admissionDate; }
-    public String toString() { return fullName + " (" + className + ")"; }
 }
 
-class Subject implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Subject {
     private String id, subjectName, className;
     
     public Subject(String subjectName, String className) {
@@ -38,8 +34,7 @@ class Subject implements Serializable {
     public String getClassName() { return className; }
 }
 
-class Class implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Class {
     private String id, className, description;
     
     public Class(String className, String description) {
@@ -53,12 +48,11 @@ class Class implements Serializable {
     public String getDescription() { return description; }
 }
 
-class Result implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Result {
     private String id, studentId, studentName, className;
     private Map<String, Integer> marks = new HashMap<>();
-    private String grade, division;
-    private int totalMarks, position;
+    private String grade = "", division = "";
+    private int totalMarks = 0, position = 0;
     
     public Result(String studentId, String studentName, String className) {
         this.studentId = studentId;
@@ -68,9 +62,11 @@ class Result implements Serializable {
     
     public void calculateGradeAndDivision() {
         if (marks.isEmpty()) return;
-        int sum = 0;
-        for (int m : marks.values()) sum += m;
-        int average = sum / marks.size();
+        int total = 0;
+        for (int mark : marks.values()) {
+            total += mark;
+        }
+        int average = total / marks.size();
         
         if (average >= 80) grade = "A";
         else if (average >= 70) grade = "B";
@@ -85,7 +81,7 @@ class Result implements Serializable {
         else if (average >= 40) division = "Division Four";
         else division = "Division Zero";
         
-        totalMarks = sum;
+        totalMarks = total;
     }
     
     public String getId() { return id; }
@@ -102,8 +98,7 @@ class Result implements Serializable {
     public void setPosition(int position) { this.position = position; }
 }
 
-class Payment implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Payment {
     private String id, studentId, studentName, description;
     private double amount;
     private String date;
@@ -124,8 +119,7 @@ class Payment implements Serializable {
     public String getStudentName() { return studentName; }
 }
 
-class Invoice implements Serializable {
-    private static final long serialVersionUID = 1L;
+class Invoice {
     private String id, studentId, studentName, description;
     private double amount;
     private String date, status;

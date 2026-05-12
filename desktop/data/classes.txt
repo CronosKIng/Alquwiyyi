@@ -1,0 +1,2 @@
+CLS_TEST_001|Darasa la Kwanza|Test Class|2025-01-01
+CLS_TEST_002|Darasa la Pili|Second Class|2025-01-01

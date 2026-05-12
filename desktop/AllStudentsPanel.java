@@ -43,7 +43,7 @@ public class AllStudentsPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
         
         JButton exportBtn = new JButton("Export to Excel");
-        exportBtn.setBackground(new Color(52, 152, 219));
+        exportBtn.setBackground(Color.WHITE);
         exportBtn.setForeground(Color.BLACK);
         exportBtn.addActionListener(e -> exportToExcel());
         

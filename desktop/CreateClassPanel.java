@@ -62,9 +62,10 @@ public class CreateClassPanel extends JPanel {
         formPanel.add(descField, gbc);
         
         JButton saveBtn = new JButton("CREATE CLASS");
-        saveBtn.setBackground(new Color(0, 85, 170));
+        saveBtn.setBackground(Color.WHITE);
         saveBtn.setForeground(Color.BLACK);
         saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        saveBtn.setBorder(BorderFactory.createLineBorder(new Color(0, 85, 170), 2));
         saveBtn.setFocusPainted(false);
         saveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         saveBtn.setBorder(BorderFactory.createEmptyBorder(12, 30, 12, 30));
@@ -85,9 +86,10 @@ public class CreateClassPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(classTable);
         
         JButton refreshBtn = new JButton("REFRESH");
-        refreshBtn.setBackground(new Color(108, 117, 125));
+        refreshBtn.setBackground(Color.WHITE);
         refreshBtn.setForeground(Color.BLACK);
         refreshBtn.setFont(new Font("Arial", Font.BOLD, 12));
+        refreshBtn.setBorder(BorderFactory.createLineBorder(new Color(108, 117, 125), 1));
         refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> refreshTable());
         

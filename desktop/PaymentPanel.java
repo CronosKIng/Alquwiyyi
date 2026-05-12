@@ -41,7 +41,7 @@ public class PaymentPanel extends JPanel {
         formPanel.add(descField, gbc);
         
         JButton payBtn = new JButton("RECORD PAYMENT");
-        payBtn.setBackground(new Color(46, 204, 113));
+        payBtn.setBackground(Color.WHITE);
         payBtn.setForeground(Color.BLACK);
         payBtn.addActionListener(e -> recordPayment());
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;

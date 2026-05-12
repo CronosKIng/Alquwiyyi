@@ -99,9 +99,10 @@ public class CreateStudentPanel extends JPanel {
         formPanel.add(phoneField, gbc);
         
         JButton saveBtn = new JButton("SAVE STUDENT");
-        saveBtn.setBackground(new Color(0, 85, 170));
+        saveBtn.setBackground(Color.WHITE);
         saveBtn.setForeground(Color.BLACK);
         saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        saveBtn.setBorder(BorderFactory.createLineBorder(new Color(0, 85, 170), 2));
         saveBtn.setFocusPainted(false);
         saveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         saveBtn.setBorder(BorderFactory.createEmptyBorder(12, 30, 12, 30));

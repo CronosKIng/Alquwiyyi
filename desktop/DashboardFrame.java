@@ -77,9 +77,10 @@ public class DashboardFrame extends JFrame {
             menuBtn.setMaximumSize(new Dimension(250, 55));
             menuBtn.setMinimumSize(new Dimension(250, 55));
             menuBtn.setPreferredSize(new Dimension(250, 55));
-            menuBtn.setBackground(new Color(48, 54, 79));
+            menuBtn.setBackground(Color.WHITE);
             menuBtn.setForeground(Color.BLACK);
             menuBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            menuBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
             menuBtn.setFocusPainted(false);
             menuBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
             menuBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -96,9 +97,10 @@ public class DashboardFrame extends JFrame {
         JButton logoutBtn = new JButton("LOGOUT");
         logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         logoutBtn.setMaximumSize(new Dimension(250, 55));
-        logoutBtn.setBackground(new Color(200, 50, 50));
+        logoutBtn.setBackground(Color.WHITE);
         logoutBtn.setForeground(Color.BLACK);
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        logoutBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 50, 50), 2));
         logoutBtn.setFocusPainted(false);
         logoutBtn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
         logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
