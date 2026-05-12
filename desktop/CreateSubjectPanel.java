@@ -1,3 +1,4 @@
+import javax.swing.border.TitledBorder;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -12,67 +13,88 @@ public class CreateSubjectPanel extends JPanel {
     
     public CreateSubjectPanel(DataManager dataManager) {
         this.dataManager = dataManager;
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        setLayout(new BorderLayout(15,15));
+        setBorder(BorderFactory.createEmptyBorder(25,25,25,25));
+        setBackground(new Color(245,245,245));
         
         JPanel formPanel = new JPanel(new GridBagLayout());
-        formPanel.setBorder(BorderFactory.createTitledBorder("Create New Subject"));
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(8, 8, 8, 8);
+        formPanel.setBackground(Color.WHITE);
+        formPanel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(200,200,200)),
+            "CREATE SUBJECT", TitledBorder.LEFT, TitledBorder.TOP,
+            new Font("Arial",Font.BOLD,14), new Color(0,85,170)));
         
-        gbc.gridx = 0; gbc.gridy = 0;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,15,10,15);
+        
+        gbc.gridx=0; gbc.gridy=0; gbc.anchor=GridBagConstraints.EAST;
         formPanel.add(new JLabel("Subject Name:"), gbc);
-        subjectField = new JTextField(20);
-        gbc.gridx = 1;
+        subjectField = new JTextField(25);
+        subjectField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(180,180,180)),
+            BorderFactory.createEmptyBorder(8,10,8,10)));
+        gbc.gridx=1; gbc.gridy=0;
         formPanel.add(subjectField, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.gridx=0; gbc.gridy=1;
         formPanel.add(new JLabel("Class:"), gbc);
         classCombo = new JComboBox<>();
+        classCombo.setBackground(Color.WHITE);
+        classCombo.setBorder(BorderFactory.createLineBorder(new Color(180,180,180)));
         refreshClassCombo();
-        gbc.gridx = 1;
+        gbc.gridx=1; gbc.gridy=1;
         formPanel.add(classCombo, gbc);
         
         JButton saveBtn = new JButton("CREATE SUBJECT");
-        saveBtn.setBackground(new Color(46, 204, 113));
+        saveBtn.setBackground(Color.WHITE);
         saveBtn.setForeground(Color.BLACK);
+        saveBtn.setBorder(BorderFactory.createLineBorder(new Color(0,85,170),2));
         saveBtn.addActionListener(e -> saveSubject());
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        gbc.gridx=0; gbc.gridy=2; gbc.gridwidth=2; gbc.anchor=GridBagConstraints.CENTER;
+        gbc.insets = new Insets(25,15,15,15);
         formPanel.add(saveBtn, gbc);
         
-        String[] columns = {"ID", "Subject Name", "Class"};
-        tableModel = new DefaultTableModel(columns, 0);
+        String[] cols = {"ID","Subject Name","Class"};
+        tableModel = new DefaultTableModel(cols,0);
         subjectTable = new JTable(tableModel);
-        refreshTable();
+        subjectTable.setRowHeight(30);
+        subjectTable.getTableHeader().setFont(new Font("Arial",Font.BOLD,12));
         
-        JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, formPanel, new JScrollPane(subjectTable));
-        splitPane.setResizeWeight(0.3);
-        add(splitPane, BorderLayout.CENTER);
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        tablePanel.setBackground(Color.WHITE);
+        tablePanel.setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(new Color(200,200,200)),
+            "ALL SUBJECTS", TitledBorder.LEFT, TitledBorder.TOP,
+            new Font("Arial",Font.BOLD,14), new Color(0,85,170)));
+        tablePanel.add(new JScrollPane(subjectTable), BorderLayout.CENTER);
+        
+        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, formPanel, tablePanel);
+        split.setResizeWeight(0.35);
+        split.setBorder(null);
+        add(split, BorderLayout.CENTER);
+        
+        refreshTable();
     }
     
     private void saveSubject() {
-        String subject = subjectField.getText().trim();
+        String sub = subjectField.getText().trim();
         String className = (String) classCombo.getSelectedItem();
-        
-        if (subject.isEmpty() || className == null || className.equals("No classes - Create class first")) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields and ensure classes exist!");
+        if (sub.isEmpty() || className == null || className.contains("No classes")) {
+            JOptionPane.showMessageDialog(this, "Enter subject and ensure classes exist!");
             return;
         }
-        
-        dataManager.addSubject(new Subject(subject, className));
-        JOptionPane.showMessageDialog(this, "Subject created successfully!");
+        dataManager.addSubject(new Subject(sub, className));
+        JOptionPane.showMessageDialog(this, "Subject created!");
         subjectField.setText("");
         refreshTable();
+        refreshClassCombo();
     }
     
     private void refreshClassCombo() {
         classCombo.removeAllItems();
-        for (Class c : dataManager.getAllClasses()) {
-            classCombo.addItem(c.getClassName());
-        }
-        if (classCombo.getItemCount() == 0) {
-            classCombo.addItem("No classes - Create class first");
-        }
+        java.util.List<Class> classes = dataManager.getAllClasses();
+        if (classes.isEmpty()) classCombo.addItem("No classes - create class first");
+        else for (Class c : classes) classCombo.addItem(c.getClassName());
     }
     
     private void refreshTable() {
