@@ -7,6 +7,9 @@ public class DashboardFrame extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private DataManager dataManager;
+    private CreateStudentPanel studentPanel;
+    private CreateSubjectPanel subjectPanel;
+    private CreateClassPanel classPanel;
     
     public DashboardFrame() {
         dataManager = new DataManager();
@@ -33,24 +36,21 @@ public class DashboardFrame extends JFrame {
         contentPanel = new JPanel(cardLayout);
         contentPanel.setBackground(new Color(245, 245, 245));
         
-        contentPanel.add(new CreateStudentPanel(dataManager), "createStudent");
+        // Create panels
+        studentPanel = new CreateStudentPanel(dataManager);
+        subjectPanel = new CreateSubjectPanel(dataManager);
+        classPanel = new CreateClassPanel(dataManager);
+        
+        contentPanel.add(studentPanel, "createStudent");
         contentPanel.add(new AllStudentsPanel(dataManager), "allStudents");
-        contentPanel.add(new CreateSubjectPanel(dataManager), "createSubject");
-        contentPanel.add(new CreateClassPanel(dataManager), "createClass");
+        contentPanel.add(subjectPanel, "createSubject");
+        contentPanel.add(classPanel, "createClass");
         contentPanel.add(new CreateResultPanel(dataManager), "createResult");
         contentPanel.add(new InvoicePanel(dataManager), "invoice");
         contentPanel.add(new ReportPanel(dataManager), "report");
         contentPanel.add(new PaymentPanel(dataManager), "payment");
         
         add(contentPanel, BorderLayout.CENTER);
-        
-        try {
-            java.net.URL iconURL = getClass().getResource("/icons/hgd.ico");
-            if (iconURL != null) {
-                java.awt.Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
-                setIconImage(icon);
-            }
-        } catch (Exception e) {}
         
         setVisible(true);
     }
@@ -80,13 +80,22 @@ public class DashboardFrame extends JFrame {
             menuBtn.setBackground(Color.WHITE);
             menuBtn.setForeground(Color.BLACK);
             menuBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
-            menuBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
             menuBtn.setFocusPainted(false);
-            menuBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+            menuBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
             menuBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             
             final String cardName = cardNames[i];
-            menuBtn.addActionListener(e -> cardLayout.show(contentPanel, cardName));
+            menuBtn.addActionListener(e -> {
+                cardLayout.show(contentPanel, cardName);
+                // Refresh data when switching panels
+                if (cardName.equals("createStudent")) {
+                    studentPanel.refreshClassCombo();
+                } else if (cardName.equals("createSubject")) {
+                    subjectPanel.refreshClassCombo();
+                } else if (cardName.equals("createClass")) {
+                    classPanel.refreshTable();
+                }
+            });
             
             sidebar.add(menuBtn);
             sidebar.add(Box.createRigidArea(new Dimension(0, 12)));
@@ -100,9 +109,8 @@ public class DashboardFrame extends JFrame {
         logoutBtn.setBackground(Color.WHITE);
         logoutBtn.setForeground(Color.BLACK);
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        logoutBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 50, 50), 2));
         logoutBtn.setFocusPainted(false);
-        logoutBtn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        logoutBtn.setBorder(BorderFactory.createLineBorder(new Color(200, 50, 50), 2));
         logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logoutBtn.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
@@ -122,7 +130,7 @@ public class DashboardFrame extends JFrame {
         
         JLabel titleLabel = new JLabel("AL-QUWIYYI School Management System");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        titleLabel.setForeground(Color.BLACK);
+        titleLabel.setForeground(Color.WHITE);
         topBar.add(titleLabel, BorderLayout.WEST);
         
         JLabel userLabel = new JLabel("ADMINISTRATOR: ALQUWIYYI");

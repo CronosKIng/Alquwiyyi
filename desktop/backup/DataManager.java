@@ -12,11 +12,7 @@ public class DataManager {
     private final String DATA_DIR = "data/";
     
     public DataManager() {
-        File dir = new File(DATA_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        loadAllData();
+        new File(DATA_DIR).mkdirs();
     }
     
     public void loadAllData() {
@@ -34,19 +30,15 @@ public class DataManager {
             for (Class c : classes) {
                 writer.println(c.getId() + "|" + c.getClassName() + "|" + c.getDescription());
             }
-            System.out.println("Saved " + classes.size() + " classes");
         } catch (IOException e) {
-            System.err.println("Error saving classes: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     public void loadClasses() {
         classes.clear();
         File file = new File(DATA_DIR + "classes.txt");
-        if (!file.exists()) {
-            System.out.println("No classes file found");
-            return;
-        }
+        if (!file.exists()) return;
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -57,9 +49,8 @@ public class DataManager {
                     classes.add(c);
                 }
             }
-            System.out.println("Loaded " + classes.size() + " classes");
         } catch (IOException e) {
-            System.err.println("Error loading classes: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -67,11 +58,9 @@ public class DataManager {
         newClass.setId(generateId("CLS"));
         classes.add(newClass);
         saveClasses();
-        System.out.println("Added class: " + newClass.getClassName() + ", Total: " + classes.size());
     }
     
     public List<Class> getAllClasses() {
-        loadClasses();  // Always reload to get latest
         return classes;
     }
     
@@ -113,7 +102,6 @@ public class DataManager {
     }
     
     public List<Student> getAllStudents() { 
-        loadStudents();
         return students; 
     }
     
@@ -154,7 +142,6 @@ public class DataManager {
     }
     
     public List<Subject> getSubjectsByClass(String className) {
-        loadSubjects();
         List<Subject> filtered = new ArrayList<>();
         for (Subject s : subjects) {
             if (s.getClassName().equals(className)) {
@@ -165,7 +152,6 @@ public class DataManager {
     }
     
     public List<Subject> getAllSubjects() { 
-        loadSubjects();
         return subjects; 
     }
     
@@ -207,12 +193,17 @@ public class DataManager {
     }
     
     public List<Result> getResultsByClass(String className) {
-        loadResults();
         List<Result> filtered = new ArrayList<>();
         for (Result r : results) {
-            if (r.getClassName().equals(className)) filtered.add(r);
+            if (r.getClassName().equals(className)) {
+                filtered.add(r);
+            }
         }
         return filtered;
+    }
+    
+    public List<Result> getAllResults() { 
+        return results; 
     }
     
     // ==================== PAYMENT METHODS ====================
@@ -252,7 +243,6 @@ public class DataManager {
     }
     
     public List<Payment> getAllPayments() {
-        loadPayments();
         return payments;
     }
     
@@ -293,7 +283,6 @@ public class DataManager {
     }
     
     public List<Invoice> getAllInvoices() {
-        loadInvoices();
         return invoices;
     }
     
