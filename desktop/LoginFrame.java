@@ -103,8 +103,9 @@ public class LoginFrame extends JFrame {
         // Login Button
         JButton loginBtn = new JButton("SIGN IN");
         loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
-        loginBtn.setBackground(new Color(0, 85, 170));
-        loginBtn.setForeground(Color.WHITE);
+        loginBtn.setBorder(BorderFactory.createLineBorder(new Color(0, 85, 170), 2));
+        loginBtn.setBackground(Color.WHITE);
+        loginBtn.setForeground(Color.BLACK);
         loginBtn.setFocusPainted(false);
         loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         loginBtn.setBorder(BorderFactory.createEmptyBorder(14, 20, 14, 20));
