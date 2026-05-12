@@ -10,15 +10,13 @@ public class DataManager {
     private List<Invoice> invoices = new ArrayList<>();
     
     private final String DATA_DIR = "data/";
-    
+
     public DataManager() {
         File dir = new File(DATA_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
+        if (!dir.exists()) dir.mkdirs();
         loadAllData();
     }
-    
+
     public void loadAllData() {
         loadClasses();
         loadStudents();
@@ -27,277 +25,243 @@ public class DataManager {
         loadPayments();
         loadInvoices();
     }
-    
-    // ==================== CLASS METHODS ====================
-    public void saveClasses() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "classes.txt"))) {
-            for (Class c : classes) {
-                writer.println(c.getId() + "|" + c.getClassName() + "|" + c.getDescription());
-            }
-            System.out.println("Saved " + classes.size() + " classes");
-        } catch (IOException e) {
-            System.err.println("Error saving classes: " + e.getMessage());
-        }
+
+    // ==================== CLASS MANAGEMENT ====================
+    public void addClass(Class c) {
+        c.setId("CLS_" + System.currentTimeMillis());
+        classes.add(c);
+        saveClasses();
     }
-    
+
+    public void saveClasses() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "classes.txt"))) {
+            for (Class c : classes) {
+                pw.println(c.getId() + "|" + c.getClassName() + "|" + c.getDescription());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
     public void loadClasses() {
         classes.clear();
-        File file = new File(DATA_DIR + "classes.txt");
-        if (!file.exists()) {
-            System.out.println("No classes file found");
-            return;
-        }
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "classes.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 3) {
-                    Class c = new Class(parts[1], parts[2]);
-                    c.setId(parts[0]);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 3) {
+                    Class c = new Class(p[1], p[2]);
+                    c.setId(p[0]);
                     classes.add(c);
                 }
             }
-            System.out.println("Loaded " + classes.size() + " classes");
-        } catch (IOException e) {
-            System.err.println("Error loading classes: " + e.getMessage());
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
-    public void addClass(Class newClass) {
-        newClass.setId(generateId("CLS"));
-        classes.add(newClass);
-        saveClasses();
-        System.out.println("Added class: " + newClass.getClassName() + ", Total: " + classes.size());
-    }
-    
+
     public List<Class> getAllClasses() {
-        loadClasses();  // Always reload to get latest
+        loadClasses();
         return classes;
     }
-    
-    // ==================== STUDENT METHODS ====================
-    public void saveStudents() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "students.txt"))) {
-            for (Student s : students) {
-                writer.println(s.getId() + "|" + s.getFullName() + "|" + s.getClassName() + "|" + 
-                              s.getParentName() + "|" + s.getParentPhone() + "|" + s.getAdmissionDate());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    // ==================== STUDENT MANAGEMENT ====================
+    public void addStudent(Student s) {
+        s.setId("STU_" + System.currentTimeMillis());
+        students.add(s);
+        saveStudents();
     }
-    
+
+    public void saveStudents() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "students.txt"))) {
+            for (Student s : students) {
+                pw.println(s.getId() + "|" + s.getFullName() + "|" + s.getClassName() + "|" +
+                           s.getParentName() + "|" + s.getParentPhone() + "|" + s.getAdmissionDate());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
     public void loadStudents() {
         students.clear();
-        File file = new File(DATA_DIR + "students.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "students.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 6) {
-                    Student s = new Student(parts[1], parts[2], parts[3], parts[4]);
-                    s.setId(parts[0]);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 6) {
+                    Student s = new Student(p[1], p[2], p[3], p[4]);
+                    s.setId(p[0]);
                     students.add(s);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
-    public void addStudent(Student student) {
-        student.setId(generateId("STU"));
-        students.add(student);
-        saveStudents();
-    }
-    
-    public List<Student> getAllStudents() { 
+
+    public List<Student> getAllStudents() {
         loadStudents();
-        return students; 
+        return students;
     }
-    
-    // ==================== SUBJECT METHODS ====================
+
+    // ==================== SUBJECT MANAGEMENT ====================
+    public void addSubject(Subject sub) {
+        sub.setId("SUB_" + System.currentTimeMillis());
+        subjects.add(sub);
+        saveSubjects();
+    }
+
     public void saveSubjects() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "subjects.txt"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "subjects.txt"))) {
             for (Subject s : subjects) {
-                writer.println(s.getId() + "|" + s.getSubjectName() + "|" + s.getClassName());
+                pw.println(s.getId() + "|" + s.getSubjectName() + "|" + s.getClassName());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
+
     public void loadSubjects() {
         subjects.clear();
-        File file = new File(DATA_DIR + "subjects.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "subjects.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 3) {
-                    Subject sub = new Subject(parts[1], parts[2]);
-                    sub.setId(parts[0]);
-                    subjects.add(sub);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 3) {
+                    Subject s = new Subject(p[1], p[2]);
+                    s.setId(p[0]);
+                    subjects.add(s);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
-    public void addSubject(Subject subject) {
-        subject.setId(generateId("SUB"));
-        subjects.add(subject);
-        saveSubjects();
+
+    public List<Subject> getAllSubjects() {
+        loadSubjects();
+        return subjects;
     }
     
     public List<Subject> getSubjectsByClass(String className) {
         loadSubjects();
-        List<Subject> filtered = new ArrayList<>();
+        List<Subject> list = new ArrayList<>();
         for (Subject s : subjects) {
-            if (s.getClassName().equals(className)) {
-                filtered.add(s);
-            }
+            if (s.getClassName().equals(className)) list.add(s);
         }
-        return filtered;
+        return list;
     }
-    
-    public List<Subject> getAllSubjects() { 
-        loadSubjects();
-        return subjects; 
+
+    // ==================== RESULT MANAGEMENT ====================
+    public void addResult(Result r) {
+        r.setId("RES_" + System.currentTimeMillis());
+        results.add(r);
+        saveResults();
     }
-    
-    // ==================== RESULT METHODS ====================
+
     public void saveResults() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "results.txt"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "results.txt"))) {
             for (Result r : results) {
-                writer.println(r.getId() + "|" + r.getStudentId() + "|" + r.getStudentName() + "|" + 
-                              r.getClassName() + "|" + r.getGrade() + "|" + r.getDivision() + "|" + r.getTotalMarks());
+                pw.println(r.getId() + "|" + r.getStudentId() + "|" + r.getStudentName() + "|" +
+                           r.getClassName() + "|" + r.getGrade() + "|" + r.getDivision() + "|" + r.getTotalMarks());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
+
     public void loadResults() {
         results.clear();
-        File file = new File(DATA_DIR + "results.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "results.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 7) {
-                    Result r = new Result(parts[1], parts[2], parts[3]);
-                    r.setId(parts[0]);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 7) {
+                    Result r = new Result(p[1], p[2], p[3]);
+                    r.setId(p[0]);
                     results.add(r);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void addResult(Result result) {
-        result.setId(generateId("RES"));
-        results.add(result);
-        saveResults();
+        } catch (IOException e) { e.printStackTrace(); }
     }
     
     public List<Result> getResultsByClass(String className) {
         loadResults();
-        List<Result> filtered = new ArrayList<>();
+        List<Result> list = new ArrayList<>();
         for (Result r : results) {
-            if (r.getClassName().equals(className)) filtered.add(r);
+            if (r.getClassName().equals(className)) list.add(r);
         }
-        return filtered;
+        return list;
     }
-    
-    // ==================== PAYMENT METHODS ====================
+
+    // ==================== PAYMENT MANAGEMENT ====================
+    public void addPayment(Payment p) {
+        p.setId("PAY_" + System.currentTimeMillis());
+        payments.add(p);
+        savePayments();
+    }
+
     public void savePayments() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "payments.txt"))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "payments.txt"))) {
             for (Payment p : payments) {
-                writer.println(p.getId() + "|" + p.getAmount() + "|" + p.getDescription() + "|" + p.getDate());
+                pw.println(p.getId() + "|" + p.getStudentId() + "|" + p.getStudentName() + "|" +
+                           p.getAmount() + "|" + p.getDescription() + "|" + p.getDate());
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (IOException e) { e.printStackTrace(); }
     }
-    
+
     public void loadPayments() {
         payments.clear();
-        File file = new File(DATA_DIR + "payments.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "payments.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 4) {
-                    Payment p = new Payment("", "", Double.parseDouble(parts[1]), parts[2]);
-                    p.setId(parts[0]);
-                    payments.add(p);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 6) {
+                    Payment pay = new Payment(p[1], p[2], Double.parseDouble(p[3]), p[4]);
+                    pay.setId(p[0]);
+                    payments.add(pay);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void addPayment(Payment payment) {
-        payment.setId(generateId("PAY"));
-        payments.add(payment);
-        savePayments();
+        } catch (IOException e) { e.printStackTrace(); }
     }
     
     public List<Payment> getAllPayments() {
         loadPayments();
         return payments;
     }
-    
-    // ==================== INVOICE METHODS ====================
-    public void saveInvoices() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "invoices.txt"))) {
-            for (Invoice i : invoices) {
-                writer.println(i.getId() + "|" + i.getAmount() + "|" + i.getDescription() + "|" + i.getDate() + "|" + i.getStatus());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+    // ==================== INVOICE MANAGEMENT ====================
+    public void addInvoice(Invoice i) {
+        i.setId("INV_" + System.currentTimeMillis());
+        invoices.add(i);
+        saveInvoices();
     }
-    
+
+    public void saveInvoices() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "invoices.txt"))) {
+            for (Invoice i : invoices) {
+                pw.println(i.getId() + "|" + i.getStudentId() + "|" + i.getStudentName() + "|" +
+                           i.getAmount() + "|" + i.getDescription() + "|" + i.getDate() + "|" + i.getStatus());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
     public void loadInvoices() {
         invoices.clear();
-        File file = new File(DATA_DIR + "invoices.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        File f = new File(DATA_DIR + "invoices.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 5) {
-                    Invoice i = new Invoice("", "", Double.parseDouble(parts[1]), parts[2]);
-                    i.setId(parts[0]);
-                    invoices.add(i);
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 7) {
+                    Invoice inv = new Invoice(p[1], p[2], Double.parseDouble(p[3]), p[4]);
+                    inv.setId(p[0]);
+                    invoices.add(inv);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void addInvoice(Invoice invoice) {
-        invoice.setId(generateId("INV"));
-        invoices.add(invoice);
-        saveInvoices();
+        } catch (IOException e) { e.printStackTrace(); }
     }
     
     public List<Invoice> getAllInvoices() {
         loadInvoices();
         return invoices;
-    }
-    
-    private String generateId(String prefix) {
-        return prefix + "_" + System.currentTimeMillis();
     }
 }

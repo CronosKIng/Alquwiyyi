@@ -1,0 +1,163 @@
+import java.io.*;
+import java.util.*;
+
+public class DataManager {
+    private List<Student> students = new ArrayList<>();
+    private List<Subject> subjects = new ArrayList<>();
+    private List<Class> classes = new ArrayList<>();
+    private List<Result> results = new ArrayList<>();
+    private List<Payment> payments = new ArrayList<>();
+    private List<Invoice> invoices = new ArrayList<>();
+    
+    private final String DATA_DIR = "data/";
+    
+    public DataManager() {
+        File dir = new File(DATA_DIR);
+        if (!dir.exists()) dir.mkdirs();
+        loadAllData();
+    }
+    
+    public void loadAllData() {
+        loadClasses();
+        loadStudents();
+        loadSubjects();
+        loadResults();
+        loadPayments();
+        loadInvoices();
+    }
+    
+    public void saveClasses() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "classes.txt"))) {
+            for (Class c : classes) {
+                pw.println(c.getId() + "|" + c.getClassName() + "|" + c.getDescription());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void loadClasses() {
+        classes.clear();
+        File f = new File(DATA_DIR + "classes.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 3) {
+                    Class c = new Class(p[1], p[2]);
+                    c.setId(p[0]);
+                    classes.add(c);
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void addClass(Class c) {
+        c.setId(generateId("CLS"));
+        classes.add(c);
+        saveClasses();
+    }
+    
+    public List<Class> getAllClasses() {
+        loadClasses();
+        return classes;
+    }
+    
+    public void saveStudents() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "students.txt"))) {
+            for (Student s : students) {
+                pw.println(s.getId() + "|" + s.getFullName() + "|" + s.getClassName() + "|" +
+                           s.getParentName() + "|" + s.getParentPhone() + "|" + s.getAdmissionDate());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void loadStudents() {
+        students.clear();
+        File f = new File(DATA_DIR + "students.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 6) {
+                    Student s = new Student(p[1], p[2], p[3], p[4]);
+                    s.setId(p[0]);
+                    students.add(s);
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void addStudent(Student s) {
+        s.setId(generateId("STU"));
+        students.add(s);
+        saveStudents();
+    }
+    
+    public List<Student> getAllStudents() {
+        loadStudents();
+        return students;
+    }
+    
+    public void saveSubjects() {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(DATA_DIR + "subjects.txt"))) {
+            for (Subject sub : subjects) {
+                pw.println(sub.getId() + "|" + sub.getSubjectName() + "|" + sub.getClassName());
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void loadSubjects() {
+        subjects.clear();
+        File f = new File(DATA_DIR + "subjects.txt");
+        if (!f.exists()) return;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] p = line.split("\\|");
+                if (p.length >= 3) {
+                    Subject sub = new Subject(p[1], p[2]);
+                    sub.setId(p[0]);
+                    subjects.add(sub);
+                }
+            }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+    
+    public void addSubject(Subject sub) {
+        sub.setId(generateId("SUB"));
+        subjects.add(sub);
+        saveSubjects();
+    }
+    
+    public List<Subject> getSubjectsByClass(String className) {
+        loadSubjects();
+        List<Subject> list = new ArrayList<>();
+        for (Subject s : subjects) if (s.getClassName().equals(className)) list.add(s);
+        return list;
+    }
+    
+    public List<Subject> getAllSubjects() {
+        loadSubjects();
+        return subjects;
+    }
+    
+    public void saveResults() {}
+    public void loadResults() {}
+    public void addResult(Result r) { r.setId(generateId("RES")); results.add(r); saveResults(); }
+    public List<Result> getResultsByClass(String cn) { return new ArrayList<>(); }
+    
+    public void savePayments() {}
+    public void loadPayments() {}
+    public void addPayment(Payment p) { p.setId(generateId("PAY")); payments.add(p); savePayments(); }
+    public List<Payment> getAllPayments() { return payments; }
+    
+    public void saveInvoices() {}
+    public void loadInvoices() {}
+    public void addInvoice(Invoice i) { i.setId(generateId("INV")); invoices.add(i); saveInvoices(); }
+    public List<Invoice> getAllInvoices() { return invoices; }
+    
+    private String generateId(String prefix) {
+        return prefix + "_" + System.currentTimeMillis();
+    }
+}

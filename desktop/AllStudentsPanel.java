@@ -1,3 +1,5 @@
+import java.util.List;
+import javax.swing.border.TitledBorder;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;

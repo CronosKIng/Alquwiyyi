@@ -63,9 +63,7 @@ class Result {
     public void calculateGradeAndDivision() {
         if (marks.isEmpty()) return;
         int total = 0;
-        for (int mark : marks.values()) {
-            total += mark;
-        }
+        for (int mark : marks.values()) total += mark;
         int average = total / marks.size();
         
         if (average >= 80) grade = "A";
@@ -113,10 +111,11 @@ class Payment {
     
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
+    public String getStudentId() { return studentId; }
+    public String getStudentName() { return studentName; }
     public double getAmount() { return amount; }
     public String getDescription() { return description; }
     public String getDate() { return date; }
-    public String getStudentName() { return studentName; }
 }
 
 class Invoice {
@@ -135,10 +134,11 @@ class Invoice {
     
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    public double getAmount() { return amount; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getStudentId() { return studentId; }
     public String getStudentName() { return studentName; }
+    public double getAmount() { return amount; }
     public String getDescription() { return description; }
     public String getDate() { return date; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
