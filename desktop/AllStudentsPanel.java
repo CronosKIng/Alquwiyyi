@@ -44,7 +44,7 @@ public class AllStudentsPanel extends JPanel {
         
         JButton exportBtn = new JButton("Export to Excel");
         exportBtn.setBackground(new Color(52, 152, 219));
-        exportBtn.setForeground(Color.WHITE);
+        exportBtn.setForeground(Color.BLACK);
         exportBtn.addActionListener(e -> exportToExcel());
         
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

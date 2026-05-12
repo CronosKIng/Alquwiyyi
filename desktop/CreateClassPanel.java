@@ -63,7 +63,7 @@ public class CreateClassPanel extends JPanel {
         
         JButton saveBtn = new JButton("CREATE CLASS");
         saveBtn.setBackground(new Color(0, 85, 170));
-        saveBtn.setForeground(Color.WHITE);
+        saveBtn.setForeground(Color.BLACK);
         saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
         saveBtn.setFocusPainted(false);
         saveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -80,13 +80,13 @@ public class CreateClassPanel extends JPanel {
         classTable.setRowHeight(35);
         classTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         classTable.getTableHeader().setBackground(new Color(48, 54, 79));
-        classTable.getTableHeader().setForeground(Color.WHITE);
+        classTable.getTableHeader().setForeground(Color.BLACK);
         
         JScrollPane scrollPane = new JScrollPane(classTable);
         
         JButton refreshBtn = new JButton("REFRESH");
         refreshBtn.setBackground(new Color(108, 117, 125));
-        refreshBtn.setForeground(Color.WHITE);
+        refreshBtn.setForeground(Color.BLACK);
         refreshBtn.setFont(new Font("Arial", Font.BOLD, 12));
         refreshBtn.setFocusPainted(false);
         refreshBtn.addActionListener(e -> refreshTable());

@@ -35,7 +35,7 @@ public class CreateResultPanel extends JPanel {
         
         saveBtn = new JButton("Save Result");
         saveBtn.setBackground(new Color(46, 204, 113));
-        saveBtn.setForeground(Color.WHITE);
+        saveBtn.setForeground(Color.BLACK);
         saveBtn.addActionListener(e -> saveResult());
         controlPanel.add(saveBtn);
         

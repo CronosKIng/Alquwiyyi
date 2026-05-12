@@ -42,7 +42,7 @@ public class InvoicePanel extends JPanel {
         
         JButton createBtn = new JButton("CREATE INVOICE");
         createBtn.setBackground(new Color(46, 204, 113));
-        createBtn.setForeground(Color.WHITE);
+        createBtn.setForeground(Color.BLACK);
         createBtn.addActionListener(e -> createInvoice());
         gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2;
         formPanel.add(createBtn, gbc);

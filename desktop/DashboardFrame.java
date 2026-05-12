@@ -78,7 +78,7 @@ public class DashboardFrame extends JFrame {
             menuBtn.setMinimumSize(new Dimension(250, 55));
             menuBtn.setPreferredSize(new Dimension(250, 55));
             menuBtn.setBackground(new Color(48, 54, 79));
-            menuBtn.setForeground(Color.WHITE);
+            menuBtn.setForeground(Color.BLACK);
             menuBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
             menuBtn.setFocusPainted(false);
             menuBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
@@ -97,7 +97,7 @@ public class DashboardFrame extends JFrame {
         logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         logoutBtn.setMaximumSize(new Dimension(250, 55));
         logoutBtn.setBackground(new Color(200, 50, 50));
-        logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setForeground(Color.BLACK);
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         logoutBtn.setFocusPainted(false);
         logoutBtn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -120,7 +120,7 @@ public class DashboardFrame extends JFrame {
         
         JLabel titleLabel = new JLabel("AL-QUWIYYI School Management System");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setForeground(Color.BLACK);
         topBar.add(titleLabel, BorderLayout.WEST);
         
         JLabel userLabel = new JLabel("ADMINISTRATOR: ALQUWIYYI");

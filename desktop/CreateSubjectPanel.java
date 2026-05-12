@@ -35,7 +35,7 @@ public class CreateSubjectPanel extends JPanel {
         
         JButton saveBtn = new JButton("CREATE SUBJECT");
         saveBtn.setBackground(new Color(46, 204, 113));
-        saveBtn.setForeground(Color.WHITE);
+        saveBtn.setForeground(Color.BLACK);
         saveBtn.addActionListener(e -> saveSubject());
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         formPanel.add(saveBtn, gbc);

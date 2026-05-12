@@ -100,7 +100,7 @@ public class CreateStudentPanel extends JPanel {
         
         JButton saveBtn = new JButton("SAVE STUDENT");
         saveBtn.setBackground(new Color(0, 85, 170));
-        saveBtn.setForeground(Color.WHITE);
+        saveBtn.setForeground(Color.BLACK);
         saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
         saveBtn.setFocusPainted(false);
         saveBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -125,7 +125,7 @@ public class CreateStudentPanel extends JPanel {
         studentTable.setRowHeight(35);
         studentTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         studentTable.getTableHeader().setBackground(new Color(48, 54, 79));
-        studentTable.getTableHeader().setForeground(Color.WHITE);
+        studentTable.getTableHeader().setForeground(Color.BLACK);
         
         JScrollPane scrollPane = new JScrollPane(studentTable);
         tablePanel.add(scrollPane, BorderLayout.CENTER);
