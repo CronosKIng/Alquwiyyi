@@ -14,24 +14,24 @@ public class DashboardFrame extends JFrame {
         
         setTitle("AL-QUWIYYI - School Management Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1300, 750);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         
         setLayout(new BorderLayout());
         
         JPanel sidebar = createSidebar();
-        sidebar.setPreferredSize(new Dimension(260, getHeight()));
-        sidebar.setBackground(new Color(25, 35, 50));
+        sidebar.setPreferredSize(new Dimension(280, getHeight()));
+        sidebar.setBackground(new Color(36, 40, 59));
         add(sidebar, BorderLayout.WEST);
         
         JPanel topBar = createTopBar();
-        topBar.setBackground(new Color(20, 28, 40));
-        topBar.setPreferredSize(new Dimension(getWidth(), 65));
+        topBar.setBackground(new Color(0, 85, 170));
+        topBar.setPreferredSize(new Dimension(getWidth(), 70));
         add(topBar, BorderLayout.NORTH);
         
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(new Color(245, 245, 250));
+        contentPanel.setBackground(new Color(245, 245, 245));
         
         contentPanel.add(new CreateStudentPanel(dataManager), "createStudent");
         contentPanel.add(new AllStudentsPanel(dataManager), "allStudents");
@@ -44,6 +44,14 @@ public class DashboardFrame extends JFrame {
         
         add(contentPanel, BorderLayout.CENTER);
         
+        try {
+            java.net.URL iconURL = getClass().getResource("/icons/hgd.ico");
+            if (iconURL != null) {
+                java.awt.Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
+                setIconImage(icon);
+            }
+        } catch (Exception e) {}
+        
         setVisible(true);
     }
     
@@ -53,9 +61,9 @@ public class DashboardFrame extends JFrame {
         sidebar.setBorder(BorderFactory.createEmptyBorder(20, 15, 20, 15));
         
         String[] menuItems = {
-            "Create Student", "All Students", "Create Subject",
-            "Create Class", "Create Result", "Invoice",
-            "Report", "Payment"
+            "CREATE STUDENT", "ALL STUDENTS", "CREATE SUBJECT",
+            "CREATE CLASS", "CREATE RESULT", "INVOICE",
+            "REPORT", "PAYMENT"
         };
         
         String[] cardNames = {
@@ -63,23 +71,17 @@ public class DashboardFrame extends JFrame {
             "createClass", "createResult", "invoice", "report", "payment"
         };
         
-        Color[] buttonColors = {
-            new Color(52, 152, 219), new Color(46, 134, 222), new Color(41, 128, 185),
-            new Color(142, 68, 173), new Color(155, 89, 182), new Color(192, 57, 43),
-            new Color(211, 84, 0), new Color(39, 174, 96)
-        };
-        
         for (int i = 0; i < menuItems.length; i++) {
             JButton menuBtn = new JButton(menuItems[i]);
             menuBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-            menuBtn.setMaximumSize(new Dimension(230, 48));
-            menuBtn.setMinimumSize(new Dimension(230, 48));
-            menuBtn.setPreferredSize(new Dimension(230, 48));
-            menuBtn.setBackground(buttonColors[i]);
+            menuBtn.setMaximumSize(new Dimension(250, 55));
+            menuBtn.setMinimumSize(new Dimension(250, 55));
+            menuBtn.setPreferredSize(new Dimension(250, 55));
+            menuBtn.setBackground(new Color(48, 54, 79));
             menuBtn.setForeground(Color.WHITE);
             menuBtn.setFont(new Font("Segoe UI", Font.BOLD, 13));
             menuBtn.setFocusPainted(false);
-            menuBtn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+            menuBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
             menuBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
             
             final String cardName = cardNames[i];
@@ -93,11 +95,13 @@ public class DashboardFrame extends JFrame {
         
         JButton logoutBtn = new JButton("LOGOUT");
         logoutBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        logoutBtn.setMaximumSize(new Dimension(230, 48));
-        logoutBtn.setBackground(new Color(192, 57, 43));
+        logoutBtn.setMaximumSize(new Dimension(250, 55));
+        logoutBtn.setBackground(new Color(200, 50, 50));
         logoutBtn.setForeground(Color.WHITE);
         logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         logoutBtn.setFocusPainted(false);
+        logoutBtn.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         logoutBtn.addActionListener(e -> {
             int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to logout?", "Logout", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.YES_OPTION) {
@@ -116,12 +120,12 @@ public class DashboardFrame extends JFrame {
         
         JLabel titleLabel = new JLabel("AL-QUWIYYI School Management System");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        titleLabel.setForeground(new Color(255, 255, 255));
+        titleLabel.setForeground(Color.WHITE);
         topBar.add(titleLabel, BorderLayout.WEST);
         
-        JLabel userLabel = new JLabel("Admin: ALQUWIYYI");
-        userLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        userLabel.setForeground(new Color(180, 190, 210));
+        JLabel userLabel = new JLabel("ADMINISTRATOR: ALQUWIYYI");
+        userLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        userLabel.setForeground(new Color(220, 220, 220));
         topBar.add(userLabel, BorderLayout.EAST);
         
         return topBar;
