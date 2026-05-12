@@ -12,7 +12,7 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         setTitle("AL-QUWIYYI School Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);  // Full screen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         
         // Main panel with gradient background
@@ -37,7 +37,7 @@ public class LoginFrame extends JFrame {
         loginCard.setPreferredSize(new Dimension(500, 550));
         loginCard.setMaximumSize(new Dimension(500, 550));
         
-        // Top Section - Blue header
+        // Top Section
         JPanel topSection = new JPanel();
         topSection.setBackground(new Color(0, 85, 170));
         topSection.setPreferredSize(new Dimension(500, 110));
@@ -64,7 +64,7 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Username label
+        // Username
         JLabel userLabel = new JLabel("USERNAME");
         userLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         userLabel.setForeground(new Color(60, 60, 60));
@@ -72,79 +72,63 @@ public class LoginFrame extends JFrame {
         gbc.gridwidth = 2;
         formPanel.add(userLabel, gbc);
         
-        // Username field - with automatic value
-        usernameField = new JTextField(VALID_USERNAME);  // Auto-filled
+        usernameField = new JTextField(VALID_USERNAME);
         usernameField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         usernameField.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200)),
             BorderFactory.createEmptyBorder(12, 15, 12, 15)
         ));
         usernameField.setBackground(new Color(250, 250, 250));
-        usernameField.setForeground(new Color(50, 50, 50));
         gbc.gridy = 1;
         formPanel.add(usernameField, gbc);
         
-        // Password label
+        // Password
         JLabel passLabel = new JLabel("PASSWORD");
         passLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         passLabel.setForeground(new Color(60, 60, 60));
         gbc.gridy = 2;
         formPanel.add(passLabel, gbc);
         
-        // Password field - with automatic value
-        passwordField = new JPasswordField(VALID_PASSWORD);  // Auto-filled
+        passwordField = new JPasswordField(VALID_PASSWORD);
         passwordField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         passwordField.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(200, 200, 200)),
             BorderFactory.createEmptyBorder(12, 15, 12, 15)
         ));
         passwordField.setBackground(new Color(250, 250, 250));
-        passwordField.setForeground(new Color(50, 50, 50));
-        passwordField.setEchoChar(*);  // Bullet character for password
+        passwordField.setEchoChar('*');
         gbc.gridy = 3;
         formPanel.add(passwordField, gbc);
         
-        // Login Button - with visible text
-        JButton loginBtn = new JButton();
-        loginBtn.setText("SIGN IN");
+        // Login Button
+        JButton loginBtn = new JButton("SIGN IN");
         loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 16));
         loginBtn.setBackground(new Color(0, 85, 170));
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFocusPainted(false);
         loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         loginBtn.setBorder(BorderFactory.createEmptyBorder(14, 20, 14, 20));
-        
-        // Hover effect
-        loginBtn.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                loginBtn.setBackground(new Color(0, 65, 145));
-            }
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                loginBtn.setBackground(new Color(0, 85, 170));
-            }
-        });
-        
         loginBtn.addActionListener(e -> attemptLogin());
         
         gbc.gridy = 4;
         gbc.insets = new Insets(30, 8, 8, 8);
         formPanel.add(loginBtn, gbc);
         
-        // Demo info text
-        JLabel demoLabel = new JLabel("Demo credentials pre-filled - Click SIGN IN", SwingConstants.CENTER);
-        demoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
-        demoLabel.setForeground(new Color(100, 180, 100));
+        // Info
+        JLabel infoLabel = new JLabel("Credentials pre-filled - Click SIGN IN", SwingConstants.CENTER);
+        infoLabel.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        infoLabel.setForeground(new Color(100, 180, 100));
         gbc.gridy = 5;
         gbc.insets = new Insets(15, 8, 8, 8);
-        formPanel.add(demoLabel, gbc);
+        formPanel.add(infoLabel, gbc);
         
         loginCard.add(formPanel, BorderLayout.CENTER);
         
-        // Footer Section
+        // Footer
         JPanel footerPanel = new JPanel();
         footerPanel.setBackground(new Color(248, 249, 250));
         footerPanel.setPreferredSize(new Dimension(500, 40));
-        JLabel footerLabel = new JLabel("© 2026 AL-QUWIYYI. All rights reserved.");
+        JLabel footerLabel = new JLabel("2025 AL-QUWIYYI. All rights reserved.");
         footerLabel.setFont(new Font("Segoe UI", Font.PLAIN, 10));
         footerLabel.setForeground(new Color(140, 140, 140));
         footerPanel.add(footerLabel);
@@ -153,7 +137,6 @@ public class LoginFrame extends JFrame {
         mainPanel.add(loginCard);
         add(mainPanel);
         
-        // Enter key can trigger login
         passwordField.addActionListener(e -> attemptLogin());
         usernameField.addActionListener(e -> attemptLogin());
     }
@@ -170,7 +153,6 @@ public class LoginFrame extends JFrame {
                 "Invalid Credentials!\n\nUsername: ALQUWIYYI\nPassword: Aquwiyyi@33",
                 "Login Failed",
                 JOptionPane.ERROR_MESSAGE);
-            // Don't clear the fields since they're pre-filled
         }
     }
     
