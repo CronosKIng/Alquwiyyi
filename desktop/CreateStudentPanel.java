@@ -27,11 +27,19 @@ public class CreateStudentPanel extends JPanel {
         formPanel.add(nameField, gbc);
         
         gbc.gridx = 0; gbc.gridy = 1;
-        formPanel.add(new JLabel("Class:"), gbc);
+        JPanel classPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         classCombo = new JComboBox<>();
-        refreshClassCombo();
+        classCombo.setPreferredSize(new Dimension(150, 25));
+        classPanel.add(classCombo);
+        JButton refreshBtn = new JButton("Refresh");
+        refreshBtn.setFont(new Font("Arial", Font.PLAIN, 11));
+        refreshBtn.setBackground(new Color(100, 100, 100));
+        refreshBtn.setForeground(Color.WHITE);
+        refreshBtn.addActionListener(e -> refreshClassCombo());
+        classPanel.add(refreshBtn);
+        formPanel.add(new JLabel("Class:"), gbc);
         gbc.gridx = 1;
-        formPanel.add(classCombo, gbc);
+        formPanel.add(classPanel, gbc);
         
         gbc.gridx = 0; gbc.gridy = 2;
         formPanel.add(new JLabel("Parent Name:"), gbc);
@@ -46,9 +54,10 @@ public class CreateStudentPanel extends JPanel {
         formPanel.add(phoneField, gbc);
         
         JButton saveBtn = new JButton("SAVE STUDENT");
-        saveBtn.setBackground(new Color(46, 204, 113));
+        saveBtn.setBackground(new Color(0, 120, 215));
         saveBtn.setForeground(Color.WHITE);
         saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        saveBtn.setFocusPainted(false);
         saveBtn.addActionListener(e -> saveStudent());
         gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
         formPanel.add(saveBtn, gbc);
@@ -67,6 +76,20 @@ public class CreateStudentPanel extends JPanel {
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, formPanel, tablePanel);
         splitPane.setResizeWeight(0.3);
         add(splitPane, BorderLayout.CENTER);
+        
+        refreshClassCombo();
+    }
+    
+    private void refreshClassCombo() {
+        classCombo.removeAllItems();
+        java.util.List<Class> classes = dataManager.getAllClasses();
+        if (classes.isEmpty()) {
+            classCombo.addItem("-- No Classes Available --");
+        } else {
+            for (Class c : classes) {
+                classCombo.addItem(c.getClassName());
+            }
+        }
     }
     
     private void saveStudent() {
@@ -75,30 +98,24 @@ public class CreateStudentPanel extends JPanel {
         String parentName = parentNameField.getText().trim();
         String phone = phoneField.getText().trim();
         
-        if (name.isEmpty() || className == null || parentName.isEmpty()) {
+        if (className == null || className.equals("-- No Classes Available --")) {
+            JOptionPane.showMessageDialog(this, "No classes available! Please create a class first.");
+            return;
+        }
+        
+        if (name.isEmpty() || parentName.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all required fields!");
             return;
         }
         
         Student student = new Student(name, className, parentName, phone);
         dataManager.addStudent(student);
-        
         JOptionPane.showMessageDialog(this, "Student added successfully!\nID: " + student.getId());
         
         nameField.setText("");
         parentNameField.setText("");
         phoneField.setText("");
         refreshTable();
-    }
-    
-    private void refreshClassCombo() {
-        classCombo.removeAllItems();
-        for (Class c : dataManager.getAllClasses()) {
-            classCombo.addItem(c.getClassName());
-        }
-        if (classCombo.getItemCount() == 0) {
-            classCombo.addItem("No classes - Create class first");
-        }
     }
     
     private void refreshTable() {

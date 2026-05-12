@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build AL-QUWIYYI EXE
 
 on:
   push:
@@ -19,43 +19,54 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Download GSON
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path "desktop\lib"
-          Invoke-WebRequest -Uri "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.10.1/gson-2.10.1.jar" -OutFile "desktop\lib\gson.jar"
-
       - name: Compile Java Files
         shell: pwsh
         run: |
           cd desktop
-          javac -cp "lib\gson.jar" -d . *.java
+          javac -d . *.java
 
       - name: Create JAR
         shell: pwsh
         run: |
           cd desktop
           jar cvfe AL-QUWIYYI.jar LoginFrame *.class
+          New-Item -ItemType Directory -Force -Path "lib"
           Move-Item -Force AL-QUWIYYI.jar lib\
 
       - name: Build EXE with jpackage
         shell: pwsh
         run: |
-          jpackage `
-            --type exe `
-            --dest dist `
-            --input desktop\lib `
-            --main-jar AL-QUWIYYI.jar `
-            --main-class LoginFrame `
-            --name "AL-QUWIYYI" `
-            --win-shortcut `
-            --win-menu `
-            --vendor "AL-QUWIYYI" `
-            --app-version "1.0.0"
+          $iconPath = "desktop\icons\hgd.ico"
+          if (Test-Path $iconPath) {
+            jpackage `
+              --type exe `
+              --dest dist `
+              --input desktop\lib `
+              --main-jar AL-QUWIYYI.jar `
+              --main-class LoginFrame `
+              --name "AL-QUWIYYI" `
+              --icon $iconPath `
+              --win-shortcut `
+              --win-menu `
+              --vendor "AL-QUWIYYI" `
+              --app-version "1.0.0"
+          } else {
+            jpackage `
+              --type exe `
+              --dest dist `
+              --input desktop\lib `
+              --main-jar AL-QUWIYYI.jar `
+              --main-class LoginFrame `
+              --name "AL-QUWIYYI" `
+              --win-shortcut `
+              --win-menu `
+              --vendor "AL-QUWIYYI" `
+              --app-version "1.0.0"
+          }
 
       - name: Upload EXE
         uses: actions/upload-artifact@v4
         with:
-          name: AL-QUWIYYI-Installer
+          name: AL-QUWIYYI-Setup
           path: dist/*.exe
           retention-days: 30

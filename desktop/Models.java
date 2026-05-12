@@ -20,10 +20,7 @@ class Student implements Serializable {
     public String getParentName() { return parentName; }
     public String getParentPhone() { return parentPhone; }
     public String getAdmissionDate() { return admissionDate; }
-    
-    public String toString() {
-        return fullName + " (" + className + ")";
-    }
+    public String toString() { return fullName + " (" + className + ")"; }
 }
 
 class Subject implements Serializable {
@@ -71,22 +68,24 @@ class Result implements Serializable {
     
     public void calculateGradeAndDivision() {
         if (marks.isEmpty()) return;
-        int avg = marks.values().stream().mapToInt(Integer::intValue).sum() / marks.size();
+        int sum = 0;
+        for (int m : marks.values()) sum += m;
+        int average = sum / marks.size();
         
-        if (avg >= 80) grade = "A";
-        else if (avg >= 70) grade = "B";
-        else if (avg >= 60) grade = "C";
-        else if (avg >= 50) grade = "D";
-        else if (avg >= 40) grade = "E";
+        if (average >= 80) grade = "A";
+        else if (average >= 70) grade = "B";
+        else if (average >= 60) grade = "C";
+        else if (average >= 50) grade = "D";
+        else if (average >= 40) grade = "E";
         else grade = "F";
         
-        if (avg >= 70) division = "Division One";
-        else if (avg >= 60) division = "Division Two";
-        else if (avg >= 50) division = "Division Three";
-        else if (avg >= 40) division = "Division Four";
+        if (average >= 70) division = "Division One";
+        else if (average >= 60) division = "Division Two";
+        else if (average >= 50) division = "Division Three";
+        else if (average >= 40) division = "Division Four";
         else division = "Division Zero";
         
-        totalMarks = marks.values().stream().mapToInt(Integer::intValue).sum();
+        totalMarks = sum;
     }
     
     public String getId() { return id; }

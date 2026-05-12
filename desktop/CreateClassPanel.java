@@ -32,8 +32,10 @@ public class CreateClassPanel extends JPanel {
         formPanel.add(descField, gbc);
         
         JButton saveBtn = new JButton("CREATE CLASS");
-        saveBtn.setBackground(new Color(46, 204, 113));
+        saveBtn.setBackground(new Color(0, 120, 215));
         saveBtn.setForeground(Color.WHITE);
+        saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
+        saveBtn.setFocusPainted(false);
         saveBtn.addActionListener(e -> saveClass());
         gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
         formPanel.add(saveBtn, gbc);
@@ -57,7 +59,8 @@ public class CreateClassPanel extends JPanel {
             return;
         }
         
-        dataManager.addClass(new Class(className, description));
+        Class newClass = new Class(className, description);
+        dataManager.addClass(newClass);
         JOptionPane.showMessageDialog(this, "Class created successfully!");
         classField.setText("");
         descField.setText("");

@@ -12,55 +12,78 @@ public class LoginFrame extends JFrame {
     public LoginFrame() {
         setTitle("AL-QUWIYYI - Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 350);
+        setSize(450, 400);
         setLocationRelativeTo(null);
         setResizable(false);
         
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(new Color(44, 62, 80));
+        mainPanel.setBackground(new Color(36, 40, 59));
         
         JLabel headerLabel = new JLabel("AL-QUWIYYI SCHOOL SYSTEM", SwingConstants.CENTER);
         headerLabel.setFont(new Font("Arial", Font.BOLD, 20));
         headerLabel.setForeground(Color.WHITE);
-        headerLabel.setBorder(BorderFactory.createEmptyBorder(30, 0, 20, 0));
+        headerLabel.setBorder(BorderFactory.createEmptyBorder(40, 0, 30, 0));
         mainPanel.add(headerLabel, BorderLayout.NORTH);
         
         JPanel loginPanel = new JPanel(new GridBagLayout());
-        loginPanel.setBackground(new Color(44, 62, 80));
-        loginPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
+        loginPanel.setBackground(new Color(36, 40, 59));
+        loginPanel.setBorder(BorderFactory.createEmptyBorder(10, 40, 40, 40));
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(12, 10, 12, 10);
         
-        JLabel userLabel = new JLabel("Username:");
-        userLabel.setForeground(Color.WHITE);
-        userLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        JLabel userLabel = new JLabel("USERNAME:");
+        userLabel.setForeground(new Color(200, 200, 200));
+        userLabel.setFont(new Font("Arial", Font.BOLD, 13));
         gbc.gridx = 0; gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
         loginPanel.add(userLabel, gbc);
         
-        usernameField = new JTextField(15);
+        usernameField = new JTextField(18);
         usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 1; gbc.gridy = 0;
+        usernameField.setBackground(new Color(50, 55, 80));
+        usernameField.setForeground(Color.WHITE);
+        usernameField.setBorder(BorderFactory.createLineBorder(new Color(80, 85, 110)));
+        usernameField.setCaretColor(Color.WHITE);
+        gbc.gridx = 0; gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         loginPanel.add(usernameField, gbc);
         
-        JLabel passLabel = new JLabel("Password:");
-        passLabel.setForeground(Color.WHITE);
-        passLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 0; gbc.gridy = 1;
+        JLabel passLabel = new JLabel("PASSWORD:");
+        passLabel.setForeground(new Color(200, 200, 200));
+        passLabel.setFont(new Font("Arial", Font.BOLD, 13));
+        gbc.gridx = 0; gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
         loginPanel.add(passLabel, gbc);
         
-        passwordField = new JPasswordField(15);
+        passwordField = new JPasswordField(18);
         passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
-        gbc.gridx = 1; gbc.gridy = 1;
+        passwordField.setBackground(new Color(50, 55, 80));
+        passwordField.setForeground(Color.WHITE);
+        passwordField.setBorder(BorderFactory.createLineBorder(new Color(80, 85, 110)));
+        passwordField.setCaretColor(Color.WHITE);
+        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         loginPanel.add(passwordField, gbc);
         
         JButton loginBtn = new JButton("LOGIN");
-        loginBtn.setBackground(new Color(46, 204, 113));
+        loginBtn.setBackground(new Color(0, 120, 215));
         loginBtn.setForeground(Color.WHITE);
         loginBtn.setFont(new Font("Arial", Font.BOLD, 14));
         loginBtn.setFocusPainted(false);
         loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2;
+        loginBtn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        loginBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                loginBtn.setBackground(new Color(0, 100, 195));
+            }
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                loginBtn.setBackground(new Color(0, 120, 215));
+            }
+        });
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.insets = new Insets(25, 10, 10, 10);
         loginPanel.add(loginBtn, gbc);
         
         mainPanel.add(loginPanel, BorderLayout.CENTER);
@@ -68,6 +91,15 @@ public class LoginFrame extends JFrame {
         
         loginBtn.addActionListener(e -> attemptLogin());
         passwordField.addActionListener(e -> attemptLogin());
+        
+        // Load icon
+        try {
+            java.net.URL iconURL = getClass().getResource("/icons/hgd.ico");
+            if (iconURL != null) {
+                java.awt.Image icon = Toolkit.getDefaultToolkit().getImage(iconURL);
+                setIconImage(icon);
+            }
+        } catch (Exception e) {}
     }
     
     private void attemptLogin() {
@@ -79,7 +111,7 @@ public class LoginFrame extends JFrame {
             new DashboardFrame().setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this,
-                "Invalid username or password!\nEnter:\nUsername: ALQUWIYYI\nPassword: Aquwiyyi@33",
+                "Invalid username or password!\n\nUsername: ALQUWIYYI\nPassword: Aquwiyyi@33",
                 "Login Failed",
                 JOptionPane.ERROR_MESSAGE);
         }
