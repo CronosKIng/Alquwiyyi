@@ -77,7 +77,8 @@ public class CreateStudentPanel extends JPanel {
     
     public void refreshClassCombo() {
         classCombo.removeAllItems();
-        for (SchoolClass c : dataManager.getAllClasses()) {
+        java.util.List<SchoolClass> classes = dataManager.getAllClasses();
+        for (SchoolClass c : classes) {
             classCombo.addItem(c.getClassName());
         }
         if (classCombo.getItemCount() == 0) {
@@ -87,7 +88,8 @@ public class CreateStudentPanel extends JPanel {
     
     private void refreshTable() {
         tableModel.setRowCount(0);
-        for (Student s : dataManager.getAllStudents()) {
+        java.util.List<Student> students = dataManager.getAllStudents();
+        for (Student s : students) {
             tableModel.addRow(new Object[]{s.getId(), s.getFullName(), s.getClassName(), s.getParentName(), s.getParentPhone()});
         }
     }

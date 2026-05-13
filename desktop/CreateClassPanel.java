@@ -51,7 +51,10 @@ public class CreateClassPanel extends JPanel {
     private void saveClass() {
         String name = classField.getText().trim();
         String desc = descField.getText().trim();
-        if (name.isEmpty()) return;
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter class name!");
+            return;
+        }
         dataManager.addClass(new SchoolClass(name, desc));
         classField.setText("");
         descField.setText("");
@@ -61,7 +64,8 @@ public class CreateClassPanel extends JPanel {
     
     public void refreshTable() {
         tableModel.setRowCount(0);
-        for (SchoolClass c : dataManager.getAllClasses()) {
+        java.util.List<SchoolClass> classes = dataManager.getAllClasses();
+        for (SchoolClass c : classes) {
             tableModel.addRow(new Object[]{c.getId(), c.getClassName(), c.getDescription()});
         }
     }

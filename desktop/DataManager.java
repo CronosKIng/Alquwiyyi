@@ -1,19 +1,35 @@
 import java.sql.*;
 import java.util.*;
+import java.io.*;
 
 public class DataManager {
     private static DataManager instance;
     private Connection conn;
     private final String DATA_DIR = "data/";
-    private final String DB_URL = "jdbc:sqlite:" + DATA_DIR + "alquwiyyi.db";
+    private String DB_URL;
     
     private DataManager() {
         try {
-            java.io.File dir = new java.io.File(DATA_DIR);
-            if (!dir.exists()) dir.mkdirs();
+            // Get absolute path for database
+            String userDir = System.getProperty("user.dir");
+            File dbFile = new File(userDir, DATA_DIR + "alquwiyyi.db");
+            File parentDir = dbFile.getParentFile();
+            if (!parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+            DB_URL = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+            
+            System.out.println("Database path: " + dbFile.getAbsolutePath());
+            
             conn = DriverManager.getConnection(DB_URL);
             createTables();
-        } catch (SQLException e) { e.printStackTrace(); }
+            
+            // Test if connection works
+            System.out.println("Database connected successfully!");
+        } catch (SQLException e) { 
+            System.err.println("Database error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     public static DataManager getInstance() {
@@ -29,17 +45,22 @@ public class DataManager {
         stmt.execute("CREATE TABLE IF NOT EXISTS results (id TEXT PRIMARY KEY, student_id TEXT, student_name TEXT, class_name TEXT, total_marks INTEGER, grade TEXT, division TEXT)");
         stmt.execute("CREATE TABLE IF NOT EXISTS invoices (id TEXT PRIMARY KEY, student_name TEXT, amount REAL, description TEXT, date TEXT, status TEXT)");
         stmt.execute("CREATE TABLE IF NOT EXISTS payments (id TEXT PRIMARY KEY, student_name TEXT, amount REAL, description TEXT, date TEXT)");
+        System.out.println("Tables created/verified");
     }
     
-    // CLASS METHODS (using SchoolClass)
+    // CLASS METHODS
     public void addClass(SchoolClass c) {
         String sql = "INSERT INTO classes(id, name, description) VALUES(?,?,?)";
         try (PreparedStatement p = conn.prepareStatement(sql)) {
             p.setString(1, "CLS_" + System.currentTimeMillis());
             p.setString(2, c.getClassName());
             p.setString(3, c.getDescription());
-            p.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+            int result = p.executeUpdate();
+            System.out.println("Class added: " + c.getClassName() + ", result: " + result);
+        } catch (SQLException e) { 
+            System.err.println("Error adding class: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     public List<SchoolClass> getAllClasses() {
@@ -50,7 +71,11 @@ public class DataManager {
                 c.setId(rs.getString("id"));
                 list.add(c);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+            System.out.println("Loaded " + list.size() + " classes from database");
+        } catch (SQLException e) { 
+            System.err.println("Error loading classes: " + e.getMessage());
+            e.printStackTrace();
+        }
         return list;
     }
     
@@ -64,6 +89,7 @@ public class DataManager {
             p.setString(4, s.getParentName());
             p.setString(5, s.getParentPhone());
             p.executeUpdate();
+            System.out.println("Student added: " + s.getFullName());
         } catch (SQLException e) { e.printStackTrace(); }
     }
     
@@ -71,7 +97,8 @@ public class DataManager {
         List<Student> list = new ArrayList<>();
         try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM students")) {
             while (rs.next()) {
-                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), rs.getString("parent_name"), rs.getString("parent_phone"));
+                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), 
+                                        rs.getString("parent_name"), rs.getString("parent_phone"));
                 s.setId(rs.getString("id"));
                 list.add(s);
             }
@@ -86,7 +113,8 @@ public class DataManager {
             p.setString(1, className);
             ResultSet rs = p.executeQuery();
             while (rs.next()) {
-                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), rs.getString("parent_name"), rs.getString("parent_phone"));
+                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), 
+                                        rs.getString("parent_name"), rs.getString("parent_phone"));
                 s.setId(rs.getString("id"));
                 list.add(s);
             }
