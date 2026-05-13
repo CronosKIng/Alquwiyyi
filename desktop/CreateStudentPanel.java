@@ -1,122 +1,94 @@
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.List;
+import java.util.*;
 
 public class CreateStudentPanel extends JPanel {
-    private DataManager dm;
+    private DataManager dataManager;
     private JTextField nameField, parentField, phoneField;
     private JComboBox<String> classCombo;
-    private JTable table;
-    private DefaultTableModel model;
+    private JTable studentTable;
+    private DefaultTableModel tableModel;
     
-    public CreateStudentPanel(DataManager dm) {
-        this.dm = dm;
-        setLayout(new BorderLayout(15,15));
-        setBorder(BorderFactory.createEmptyBorder(25,25,25,25));
-        setBackground(new Color(245,245,245));
+    public CreateStudentPanel(DataManager dataManager) {
+        this.dataManager = dataManager;
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
-        JPanel form = new JPanel(new GridBagLayout());
-        form.setBackground(Color.WHITE);
-        form.setBorder(BorderFactory.createTitledBorder("ADD NEW STUDENT"));
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBorder(BorderFactory.createTitledBorder("ADD NEW STUDENT"));
+        
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,15,10,15);
+        gbc.insets = new Insets(5, 5, 5, 5);
         
-        gbc.gridx=0; gbc.gridy=0; gbc.anchor=GridBagConstraints.EAST;
-        form.add(new JLabel("Full Name:"), gbc);
-        nameField = new JTextField(25);
-        nameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(8,10,8,10)));
-        gbc.gridx=1; gbc.anchor=GridBagConstraints.WEST;
-        form.add(nameField, gbc);
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Full Name:"), gbc);
+        nameField = new JTextField(20);
+        gbc.gridx = 1;
+        formPanel.add(nameField, gbc);
         
-        gbc.gridx=0; gbc.gridy=1;
-        form.add(new JLabel("Class:"), gbc);
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Class:"), gbc);
         classCombo = new JComboBox<>();
-        classCombo.setBackground(Color.WHITE);
-        classCombo.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         refreshClassCombo();
-        gbc.gridx=1;
-        form.add(classCombo, gbc);
+        gbc.gridx = 1;
+        formPanel.add(classCombo, gbc);
         
-        gbc.gridx=0; gbc.gridy=2;
-        form.add(new JLabel("Parent Name:"), gbc);
-        parentField = new JTextField(25);
-        parentField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(8,10,8,10)));
-        gbc.gridx=1;
-        form.add(parentField, gbc);
+        gbc.gridx = 0; gbc.gridy = 2;
+        formPanel.add(new JLabel("Parent Name:"), gbc);
+        parentField = new JTextField(20);
+        gbc.gridx = 1;
+        formPanel.add(parentField, gbc);
         
-        gbc.gridx=0; gbc.gridy=3;
-        form.add(new JLabel("Phone:"), gbc);
-        phoneField = new JTextField(20);
-        phoneField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.GRAY),
-            BorderFactory.createEmptyBorder(8,10,8,10)));
-        gbc.gridx=1;
-        form.add(phoneField, gbc);
+        gbc.gridx = 0; gbc.gridy = 3;
+        formPanel.add(new JLabel("Phone:"), gbc);
+        phoneField = new JTextField(15);
+        gbc.gridx = 1;
+        formPanel.add(phoneField, gbc);
         
         JButton saveBtn = new JButton("SAVE STUDENT");
-        saveBtn.setBackground(Color.WHITE);
-        saveBtn.setForeground(Color.BLACK);
-        saveBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        saveBtn.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        saveBtn.setFocusPainted(false);
         saveBtn.addActionListener(e -> saveStudent());
-        gbc.gridx=0; gbc.gridy=4; gbc.gridwidth=2;
-        gbc.anchor=GridBagConstraints.CENTER;
-        gbc.insets=new Insets(25,15,15,15);
-        form.add(saveBtn, gbc);
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        formPanel.add(saveBtn, gbc);
         
-        String[] cols = {"ID","Name","Class","Parent","Phone","Date"};
-        model = new DefaultTableModel(cols,0);
-        table = new JTable(model);
-        table.setRowHeight(30);
-        JScrollPane sp = new JScrollPane(table);
-        JPanel tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createTitledBorder("REGISTERED STUDENTS"));
-        tablePanel.add(sp, BorderLayout.CENTER);
-        
-        JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT, form, tablePanel);
-        split.setResizeWeight(0.4);
-        add(split);
-        
+        String[] columns = {"ID", "Name", "Class", "Parent", "Phone"};
+        tableModel = new DefaultTableModel(columns, 0);
+        studentTable = new JTable(tableModel);
         refreshTable();
-    }
-    
-    public void refreshClassCombo() {
-        classCombo.removeAllItems();
-        List<Class> classes = dm.getAllClasses();
-        if (classes.isEmpty()) {
-            classCombo.addItem("No classes - Create class first");
-        } else {
-            for (Class c : classes) classCombo.addItem(c.getClassName());
-        }
+        
+        add(formPanel, BorderLayout.NORTH);
+        add(new JScrollPane(studentTable), BorderLayout.CENTER);
     }
     
     private void saveStudent() {
         String name = nameField.getText().trim();
-        String cls = (String) classCombo.getSelectedItem();
-        if (name.isEmpty() || cls == null || cls.contains("No classes")) {
-            JOptionPane.showMessageDialog(this, "Fill all fields and ensure class exists");
-            return;
-        }
-        dm.addStudent(new Student(name, cls, parentField.getText().trim(), phoneField.getText().trim()));
-        JOptionPane.showMessageDialog(this, "Student saved!");
-        nameField.setText(""); parentField.setText(""); phoneField.setText("");
+        String className = (String) classCombo.getSelectedItem();
+        String parent = parentField.getText().trim();
+        String phone = phoneField.getText().trim();
+        if (name.isEmpty() || className == null) return;
+        dataManager.addStudent(new Student(name, className, parent, phone));
+        nameField.setText("");
+        parentField.setText("");
+        phoneField.setText("");
         refreshTable();
-        refreshClassCombo();
+        JOptionPane.showMessageDialog(this, "Student added!");
+    }
+    
+    public void refreshClassCombo() {
+        classCombo.removeAllItems();
+        for (SchoolClass c : dataManager.getAllClasses()) {
+            classCombo.addItem(c.getClassName());
+        }
+        if (classCombo.getItemCount() == 0) {
+            classCombo.addItem("No classes - Create class first");
+        }
     }
     
     private void refreshTable() {
-        model.setRowCount(0);
-        for (Student s : dm.getAllStudents()) {
-            model.addRow(new Object[]{s.getId(), s.getFullName(), s.getClassName(), 
-                        s.getParentName(), s.getParentPhone(), s.getAdmissionDate()});
+        tableModel.setRowCount(0);
+        for (Student s : dataManager.getAllStudents()) {
+            tableModel.addRow(new Object[]{s.getId(), s.getFullName(), s.getClassName(), s.getParentName(), s.getParentPhone()});
         }
     }
 }

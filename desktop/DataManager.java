@@ -31,8 +31,8 @@ public class DataManager {
         stmt.execute("CREATE TABLE IF NOT EXISTS payments (id TEXT PRIMARY KEY, student_name TEXT, amount REAL, description TEXT, date TEXT)");
     }
     
-    // CLASS METHODS
-    public void addClass(Class c) {
+    // CLASS METHODS (using SchoolClass)
+    public void addClass(SchoolClass c) {
         String sql = "INSERT INTO classes(id, name, description) VALUES(?,?,?)";
         try (PreparedStatement p = conn.prepareStatement(sql)) {
             p.setString(1, "CLS_" + System.currentTimeMillis());
@@ -42,11 +42,11 @@ public class DataManager {
         } catch (SQLException e) { e.printStackTrace(); }
     }
     
-    public List<Class> getAllClasses() {
-        List<Class> list = new ArrayList<>();
+    public List<SchoolClass> getAllClasses() {
+        List<SchoolClass> list = new ArrayList<>();
         try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM classes")) {
             while (rs.next()) {
-                Class c = new Class(rs.getString("name"), rs.getString("description"));
+                SchoolClass c = new SchoolClass(rs.getString("name"), rs.getString("description"));
                 c.setId(rs.getString("id"));
                 list.add(c);
             }

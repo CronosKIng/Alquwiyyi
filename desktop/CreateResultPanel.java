@@ -66,7 +66,7 @@ public class CreateResultPanel extends JPanel {
     
     private void refreshClassCombo() {
         classCombo.removeAllItems();
-        for (Class c : dataManager.getAllClasses()) {
+        for (SchoolClass c : dataManager.getAllClasses()) {
             classCombo.addItem(c.getClassName());
         }
         if (classCombo.getItemCount() == 0) {

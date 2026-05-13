@@ -34,10 +34,10 @@ class Subject {
     public String getClassName() { return className; }
 }
 
-class Class {
+class SchoolClass {
     private String id, className, description;
     
-    public Class(String className, String description) {
+    public SchoolClass(String className, String description) {
         this.className = className;
         this.description = description;
     }
