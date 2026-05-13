@@ -1,162 +1,217 @@
-import java.io.*;
+import java.sql.*;
 import java.util.*;
 
 public class DataManager {
-    private List<Student> students = new ArrayList<>();
-    private List<Subject> subjects = new ArrayList<>();
-    private List<Class> classes = new ArrayList<>();
-    private List<Result> results = new ArrayList<>();
-    private List<Payment> payments = new ArrayList<>();
-    private List<Invoice> invoices = new ArrayList<>();
-    
+    private static DataManager instance;
+    private Connection conn;
     private final String DATA_DIR = "data/";
+    private final String DB_URL = "jdbc:sqlite:" + DATA_DIR + "alquwiyyi.db";
     
-    public DataManager() {
-        File dir = new File(DATA_DIR);
-        if (!dir.exists()) dir.mkdirs();
-        loadAllData();
-    }
-    
-    public void loadAllData() {
-        loadClasses();
-        loadStudents();
-        loadSubjects();
-        loadResults();
-        loadPayments();
-        loadInvoices();
+    private DataManager() {
+        try {
+            java.io.File dir = new java.io.File(DATA_DIR);
+            if (!dir.exists()) dir.mkdirs();
+            conn = DriverManager.getConnection(DB_URL);
+            createTables();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
     
-    // --- CLASSES ---
-    public void saveClasses() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "classes.txt"))) {
-            for (Class c : classes) writer.println(c.getId() + "|" + c.getClassName() + "|" + c.getDescription());
-        } catch (IOException e) { e.printStackTrace(); }
+    public static DataManager getInstance() {
+        if (instance == null) instance = new DataManager();
+        return instance;
     }
-    public void loadClasses() {
-        classes.clear();
-        File file = new File(DATA_DIR + "classes.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 3) { Class c = new Class(parts[1], parts[2]); c.setId(parts[0]); classes.add(c); }
+    
+    private void createTables() throws SQLException {
+        Statement stmt = conn.createStatement();
+        stmt.execute("CREATE TABLE IF NOT EXISTS classes (id TEXT PRIMARY KEY, name TEXT, description TEXT)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS students (id TEXT PRIMARY KEY, full_name TEXT, class_name TEXT, parent_name TEXT, parent_phone TEXT)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS subjects (id TEXT PRIMARY KEY, subject_name TEXT, class_name TEXT)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS results (id TEXT PRIMARY KEY, student_id TEXT, student_name TEXT, class_name TEXT, total_marks INTEGER, grade TEXT, division TEXT)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS invoices (id TEXT PRIMARY KEY, student_name TEXT, amount REAL, description TEXT, date TEXT, status TEXT)");
+        stmt.execute("CREATE TABLE IF NOT EXISTS payments (id TEXT PRIMARY KEY, student_name TEXT, amount REAL, description TEXT, date TEXT)");
+    }
+    
+    // CLASS METHODS
+    public void addClass(Class c) {
+        String sql = "INSERT INTO classes(id, name, description) VALUES(?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, "CLS_" + System.currentTimeMillis());
+            p.setString(2, c.getClassName());
+            p.setString(3, c.getDescription());
+            p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+    
+    public List<Class> getAllClasses() {
+        List<Class> list = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM classes")) {
+            while (rs.next()) {
+                Class c = new Class(rs.getString("name"), rs.getString("description"));
+                c.setId(rs.getString("id"));
+                list.add(c);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public void addClass(Class c) { c.setId("CLS_"+System.currentTimeMillis()); classes.add(c); saveClasses(); }
-    public List<Class> getAllClasses() { return classes; }
-
-    // --- STUDENTS ---
-    public void saveStudents() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "students.txt"))) {
-            for (Student s : students) writer.println(s.getId() + "|" + s.getFullName() + "|" + s.getClassName() + "|" + s.getParentName() + "|" + s.getParentPhone());
-        } catch (IOException e) { e.printStackTrace(); }
+    
+    // STUDENT METHODS
+    public void addStudent(Student s) {
+        String sql = "INSERT INTO students(id, full_name, class_name, parent_name, parent_phone) VALUES(?,?,?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, "STU_" + System.currentTimeMillis());
+            p.setString(2, s.getFullName());
+            p.setString(3, s.getClassName());
+            p.setString(4, s.getParentName());
+            p.setString(5, s.getParentPhone());
+            p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
-    public void loadStudents() {
-        students.clear();
-        File file = new File(DATA_DIR + "students.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 5) { Student s = new Student(parts[1], parts[2], parts[3], parts[4]); s.setId(parts[0]); students.add(s); }
+    
+    public List<Student> getAllStudents() {
+        List<Student> list = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM students")) {
+            while (rs.next()) {
+                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), rs.getString("parent_name"), rs.getString("parent_phone"));
+                s.setId(rs.getString("id"));
+                list.add(s);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public void addStudent(Student s) { s.setId("STU_"+System.currentTimeMillis()); students.add(s); saveStudents(); }
-    public List<Student> getAllStudents() { return students; }
-
-    // --- SUBJECTS ---
-    public void saveSubjects() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "subjects.txt"))) {
-            for (Subject s : subjects) writer.println(s.getId() + "|" + s.getSubjectName() + "|" + s.getClassName());
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-    public void loadSubjects() {
-        subjects.clear();
-        File file = new File(DATA_DIR + "subjects.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 3) { Subject s = new Subject(parts[1], parts[2]); s.setId(parts[0]); subjects.add(s); }
+    
+    public List<Student> getStudentsByClass(String className) {
+        List<Student> list = new ArrayList<>();
+        String sql = "SELECT * FROM students WHERE class_name = ?";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, className);
+            ResultSet rs = p.executeQuery();
+            while (rs.next()) {
+                Student s = new Student(rs.getString("full_name"), rs.getString("class_name"), rs.getString("parent_name"), rs.getString("parent_phone"));
+                s.setId(rs.getString("id"));
+                list.add(s);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public void addSubject(Subject s) { s.setId("SUB_"+System.currentTimeMillis()); subjects.add(s); saveSubjects(); }
-    public List<Subject> getAllSubjects() { return subjects; }
+    
+    // SUBJECT METHODS
+    public void addSubject(Subject s) {
+        String sql = "INSERT INTO subjects(id, subject_name, class_name) VALUES(?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, "SUB_" + System.currentTimeMillis());
+            p.setString(2, s.getSubjectName());
+            p.setString(3, s.getClassName());
+            p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+    
+    public List<Subject> getAllSubjects() {
+        List<Subject> list = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM subjects")) {
+            while (rs.next()) {
+                Subject s = new Subject(rs.getString("subject_name"), rs.getString("class_name"));
+                s.setId(rs.getString("id"));
+                list.add(s);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
+    
     public List<Subject> getSubjectsByClass(String className) {
-        List<Subject> filtered = new ArrayList<>();
-        for (Subject s : subjects) if (s.getClassName().equals(className)) filtered.add(s);
-        return filtered;
-    }
-
-    // --- RESULTS ---
-    public void saveResults() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "results.txt"))) {
-            for (Result r : results) writer.println(r.getId() + "|" + r.getStudentId() + "|" + r.getStudentName() + "|" + r.getClassName() + "|" + r.getGrade() + "|" + r.getDivision() + "|" + r.getTotalMarks());
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-    public void loadResults() {
-        results.clear();
-        File file = new File(DATA_DIR + "results.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 7) { Result r = new Result(parts[1], parts[2], parts[3]); r.setId(parts[0]); results.add(r); }
+        List<Subject> list = new ArrayList<>();
+        String sql = "SELECT * FROM subjects WHERE class_name = ?";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, className);
+            ResultSet rs = p.executeQuery();
+            while (rs.next()) {
+                Subject s = new Subject(rs.getString("subject_name"), rs.getString("class_name"));
+                s.setId(rs.getString("id"));
+                list.add(s);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public void addResult(Result r) { r.setId("RES_"+System.currentTimeMillis()); results.add(r); saveResults(); }
+    
+    // RESULT METHODS
+    public void addResult(Result r) {
+        String sql = "INSERT INTO results(id, student_id, student_name, class_name, total_marks, grade, division) VALUES(?,?,?,?,?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, "RES_" + System.currentTimeMillis());
+            p.setString(2, r.getStudentId());
+            p.setString(3, r.getStudentName());
+            p.setString(4, r.getClassName());
+            p.setInt(5, r.getTotalMarks());
+            p.setString(6, r.getGrade());
+            p.setString(7, r.getDivision());
+            p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+    
     public List<Result> getResultsByClass(String className) {
-        List<Result> filtered = new ArrayList<>();
-        for (Result r : results) if (r.getClassName().equals(className)) filtered.add(r);
-        return filtered;
-    }
-
-    // --- INVOICES & PAYMENTS ---
-    public void addInvoice(Invoice i) { i.setId("INV_"+System.currentTimeMillis()); invoices.add(i); saveInvoices(); }
-    public void saveInvoices() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "invoices.txt"))) {
-            for (Invoice i : invoices) writer.println(i.getId() + "|" + i.getAmount() + "|" + i.getDescription() + "|" + i.getDate() + "|" + i.getStatus());
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-    public void loadInvoices() {
-        invoices.clear();
-        File file = new File(DATA_DIR + "invoices.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 5) { Invoice i = new Invoice("", "", Double.parseDouble(parts[1]), parts[2]); i.setId(parts[0]); invoices.add(i); }
+        List<Result> list = new ArrayList<>();
+        String sql = "SELECT * FROM results WHERE class_name = ?";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, className);
+            ResultSet rs = p.executeQuery();
+            while (rs.next()) {
+                Result r = new Result(rs.getString("student_id"), rs.getString("student_name"), rs.getString("class_name"));
+                r.setId(rs.getString("id"));
+                list.add(r);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public List<Invoice> getAllInvoices() { return invoices; }
-
-    public void addPayment(Payment p) { p.setId("PAY_"+System.currentTimeMillis()); payments.add(p); savePayments(); }
-    public void savePayments() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(DATA_DIR + "payments.txt"))) {
-            for (Payment p : payments) writer.println(p.getId() + "|" + p.getAmount() + "|" + p.getDescription() + "|" + p.getDate());
-        } catch (IOException e) { e.printStackTrace(); }
+    
+    // INVOICE METHODS
+    public void addInvoice(Invoice i) {
+        String sql = "INSERT INTO invoices(id, student_name, amount, description, date, status) VALUES(?,?,?,?,?,?)";
+        try (PreparedStatement p = conn.prepareStatement(sql)) {
+            p.setString(1, "INV_" + System.currentTimeMillis());
+            p.setString(2, i.getStudentName());
+            p.setDouble(3, i.getAmount());
+            p.setString(4, i.getDescription());
+            p.setString(5, i.getDate());
+            p.setString(6, i.getStatus());
+            p.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
     }
-    public void loadPayments() {
-        payments.clear();
-        File file = new File(DATA_DIR + "payments.txt");
-        if (!file.exists()) return;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length >= 4) { Payment p = new Payment("", "", Double.parseDouble(parts[1]), parts[2]); p.setId(parts[0]); payments.add(p); }
+    
+    public List<Invoice> getAllInvoices() {
+        List<Invoice> list = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM invoices")) {
+            while (rs.next()) {
+                Invoice i = new Invoice("", rs.getString("student_name"), rs.getDouble("amount"), rs.getString("description"));
+                i.setId(rs.getString("id"));
+                list.add(i);
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
     }
-    public List<Payment> getAllPayments() { return payments; }
+    
+    // PAYMENT METHODS
+    public void addPayment(Payment p) {
+        String sql = "INSERT INTO payments(id, student_name, amount, description, date) VALUES(?,?,?,?,?)";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "PAY_" + System.currentTimeMillis());
+            pstmt.setString(2, p.getStudentName());
+            pstmt.setDouble(3, p.getAmount());
+            pstmt.setString(4, p.getDescription());
+            pstmt.setString(5, p.getDate());
+            pstmt.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
+    
+    public List<Payment> getAllPayments() {
+        List<Payment> list = new ArrayList<>();
+        try (ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM payments")) {
+            while (rs.next()) {
+                Payment p = new Payment("", rs.getString("student_name"), rs.getDouble("amount"), rs.getString("description"));
+                p.setId(rs.getString("id"));
+                list.add(p);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return list;
+    }
+    
+    public void loadAllData() {}
 }

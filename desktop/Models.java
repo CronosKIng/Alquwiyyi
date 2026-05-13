@@ -65,20 +65,17 @@ class Result {
         int total = 0;
         for (int mark : marks.values()) total += mark;
         int average = total / marks.size();
-        
         if (average >= 80) grade = "A";
         else if (average >= 70) grade = "B";
         else if (average >= 60) grade = "C";
         else if (average >= 50) grade = "D";
         else if (average >= 40) grade = "E";
         else grade = "F";
-        
         if (average >= 70) division = "Division One";
         else if (average >= 60) division = "Division Two";
         else if (average >= 50) division = "Division Three";
         else if (average >= 40) division = "Division Four";
         else division = "Division Zero";
-        
         totalMarks = total;
     }
     
@@ -111,11 +108,10 @@ class Payment {
     
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    public String getStudentId() { return studentId; }
-    public String getStudentName() { return studentName; }
     public double getAmount() { return amount; }
     public String getDescription() { return description; }
     public String getDate() { return date; }
+    public String getStudentName() { return studentName; }
 }
 
 class Invoice {
@@ -134,11 +130,10 @@ class Invoice {
     
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    public String getStudentId() { return studentId; }
-    public String getStudentName() { return studentName; }
     public double getAmount() { return amount; }
-    public String getDescription() { return description; }
-    public String getDate() { return date; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getStudentName() { return studentName; }
+    public String getDescription() { return description; }
+    public String getDate() { return date; }
 }
